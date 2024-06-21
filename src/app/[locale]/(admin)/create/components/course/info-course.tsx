@@ -47,7 +47,7 @@ const courseFormSchema = z.object({
   targetParticipant: z.string(),
   isLocal: z.boolean(),
   courseCode: z.string(),
-  heldDate: z.date(),
+  heldDate: z.date().optional(),
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
