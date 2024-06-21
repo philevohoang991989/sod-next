@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import moment from 'moment'
 import {
   Form,
   FormControl,
@@ -22,8 +23,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ENDPOINT } from "@/constants/endpoint";
+import { format } from "date-fns";
 import useAxiosAuth from "@/lib/hook/useAxiosAuth";
 import { useSession } from "next-auth/react";
+import { TypeCourse } from "@/types";
+import { Label } from "@/components/ui/label";
+import { CalendarIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 const courseFormSchema = z.object({
   id: z.number(),
@@ -35,14 +47,17 @@ const courseFormSchema = z.object({
   targetParticipant: z.string(),
   isLocal: z.boolean(),
   courseCode: z.string(),
+  heldDate: z.date(),
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
 
 export default function InfoCourse() {
-    const { data: session } = useSession();
+  const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
+  const [listCourseHRMS, setlistCourseHRMS] = useState<any>([]);
   const [localCourse, setLocalCourse] = useState<boolean>(false);
+  const [itemCourse, setItemCourse] = useState({});
   const defaultValues: Partial<CourseFormValues> = {
     id: 0,
     name: "",
@@ -53,6 +68,7 @@ export default function InfoCourse() {
     targetParticipant: "",
     isLocal: false,
     courseCode: "",
+    heldDate: undefined,
   };
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseFormSchema),
@@ -64,13 +80,37 @@ export default function InfoCourse() {
   console.log(form.watch("name"));
   useEffect(() => {
     try {
-        const res = session &&  axiosAuth.get(ENDPOINT.LIST_COURSE_HRMS);
-        console.log({ res });
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        // Optionally handle specific error cases here
-      }
+      const res = session && axiosAuth.get(ENDPOINT.LIST_COURSE_HRMS);
+      res?.then((res) => {
+        console.log(res.data);
+        setlistCourseHRMS(res.data);
+      });
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      // Optionally handle specific error cases here
+    }
   }, [session]);
+  console.log({ itemCourse });
+  useEffect(() => {
+    localCourse && form.reset(defaultValues);
+  }, [localCourse]);
+  const getDetailCourse = (value: any) => {
+    console.log({ getDetailCourse: value });
+    axiosAuth
+      .get(`/Course/${value.courseDetail.id}/classes/${value.id}`)
+      .then((res) => {
+        const defaultValues = {
+          name: res.data.name,
+          curriculum: res.data.curriculum,
+          category: res.data.category,
+          modelOfTraining: res.data.modelOfTraining,
+          subject: res.data.subject,
+          targetParticipant: res.data.targetParticipant,
+          heldDate: res.data.heldDate,
+        };
+        form.reset(defaultValues);
+      });
+  };
 
   return (
     <div className="p-[1.5rem] rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
@@ -86,10 +126,36 @@ export default function InfoCourse() {
           Create Local Course
         </Button>
       </div>
+
+      {!localCourse && (
+        <>
+          <Label>Course</Label>{" "}
+          <Select
+            onValueChange={(value) => {
+              setItemCourse(value);
+              getDetailCourse(value);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a verified email to display" />
+            </SelectTrigger>
+            <SelectContent>
+              {listCourseHRMS.map((item: any) => {
+                return (
+                  <SelectItem key={item.id} value={item}>
+                    {`[${item.id} - ${item.name}] ${item.courseDetail.id} - `}
+                    <strong>{item.courseDetail.name}</strong>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </>
+      )}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="pt-0 grid gap-4"
+          className="pt-0 grid gap-4 mt-[1rem]"
         >
           <div className="grid gap-2">
             <FormField
@@ -98,25 +164,106 @@ export default function InfoCourse() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Course Name</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a verified email to display" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="m@example.com">
-                        m@example.com
-                      </SelectItem>
-                      <SelectItem value="m@google.com">m@google.com</SelectItem>
-                      <SelectItem value="m@support.com">
-                        m@support.com
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input placeholder="Not specified" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-5 grid-flow-row gap-4">
+            <FormField
+              control={form.control}
+              name="curriculum"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Course Curriculum</FormLabel>
+                  <Input placeholder="Not specified" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Course Catgory</FormLabel>
+                  <Input placeholder="Not specified" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="modelOfTraining"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mode of Training</FormLabel>
+                  <Input placeholder="Not specified" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="subject"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mode of Training</FormLabel>
+                  <Input placeholder="Not specified" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="targetParticipant"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Target Participant</FormLabel>
+                  <Input placeholder="Not specified" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-5 grid-flow-row gap-4">
+            <FormField
+              control={form.control}
+              name="heldDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Held Date</FormLabel>
+                  <Popover >
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "pl-3 text-left font-normal w-[100%] h-[44px]",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            moment(field.value).format("DD/MM/YYYY")
+                          ) : (
+                            <span>Not specified</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        // initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -124,7 +271,11 @@ export default function InfoCourse() {
           </div>
           {localCourse && (
             <div className="flex justify-end items-center gap-[12px]">
-              <Button variant="outline" className="border-none text-[14px]">
+              <Button
+                variant="outline"
+                className="border-none text-[14px]"
+                onClick={() => form.reset(defaultValues)}
+              >
                 Cancel
               </Button>
               <Button type="submit" className="text-[14px]">
