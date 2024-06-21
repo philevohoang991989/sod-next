@@ -77,12 +77,10 @@ export default function InfoCourse() {
   const onSubmit = async (data: CourseFormValues) => {
     console.log({ data });
   };
-  console.log(form.watch("name"));
   useEffect(() => {
     try {
       const res = session && axiosAuth.get(ENDPOINT.LIST_COURSE_HRMS);
       res?.then((res) => {
-        console.log(res.data);
         setlistCourseHRMS(res.data);
       });
     } catch (error) {
@@ -90,7 +88,6 @@ export default function InfoCourse() {
       // Optionally handle specific error cases here
     }
   }, [session]);
-  console.log({ itemCourse });
   useEffect(() => {
     localCourse && form.reset(defaultValues);
   }, [localCourse]);

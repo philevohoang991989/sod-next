@@ -5,7 +5,6 @@ import axios from "axios";
 
 const useApiAuth = () => {
   const { data: session } = useSession();
-  console.log({ useApiAuth: session });
   const ApiAuth = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
   });
