@@ -1,11 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
-import { useLocale, useTranslations } from "next-intl";
-import { FormEvent, useState } from "react";
+import { signIn } from "next-auth/react";
+import { useLocale } from "next-intl";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { z } from "zod";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { toast } from "@/components/ui/use-toast";
@@ -66,9 +65,6 @@ const FormSchema = z.object({
 
 export default function Login() {
   const locale = useLocale();
-  const session: any = useSession();
-  const t = useTranslations("Login");
-  const [error, setError] = useState<string>();
   const router = useRouter();
   const [isOtp, setIsOtp] = useState<boolean>(false);
 
