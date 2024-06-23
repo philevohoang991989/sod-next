@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import moment from 'moment'
+import moment from "moment";
 import {
   Form,
   FormControl,
@@ -48,16 +48,32 @@ const courseFormSchema = z.object({
   isLocal: z.boolean(),
   courseCode: z.string(),
   heldDate: z.date().optional(),
+  referenceClass: z.string().optional(),
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
 
-export default function InfoCourse() {
+type Props = {
+  idCourse: number;
+  idClass: number;
+  setIdCourse?: (value: any) => void;
+  setIdClass?: (value: any) => void;
+};
+
+export default function InfoCourse({
+  idCourse,
+  idClass,
+  setIdCourse,
+  setIdClass,
+}: Props) {
+  console.log({ idCourse });
+
   const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
   const [listCourseHRMS, setlistCourseHRMS] = useState<any>([]);
   const [localCourse, setLocalCourse] = useState<boolean>(false);
   const [itemCourse, setItemCourse] = useState({});
+  const [actionCourse, setActionCourse] = useState<boolean>(false)
   const defaultValues: Partial<CourseFormValues> = {
     id: 0,
     name: "",
@@ -69,13 +85,41 @@ export default function InfoCourse() {
     isLocal: false,
     courseCode: "",
     heldDate: undefined,
+    referenceClass: "",
   };
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseFormSchema),
     defaultValues,
   });
+  const UpdateCourse = (data: TypeCourse) => {
+    console.log("UpdateCourse", data);
+  };
+  const CreateCourse = (data: TypeCourse) => {
+    console.log("CreateCourse", data);
+    axiosAuth.post(ENDPOINT.CREATE_COURSE, data).then((res) => {
+      console.log({ res });
+
+      // const defaultValues = {
+      //   name: res.data.name,
+      //   curriculum: res.data.curriculum,
+      //   category: res.data.category,
+      //   modelOfTraining: res.data.modelOfTraining,
+      //   subject: res.data.subject,
+      //   targetParticipant: res.data.targetParticipant,
+      //   heldDate: res.data.heldDate,
+      // };
+      form.reset(res.data);
+      typeof setIdCourse === "function" && setIdCourse(res.data.id);
+      setActionCourse(false)
+    });
+  };
   const onSubmit = async (data: CourseFormValues) => {
     console.log({ data });
+    if (idCourse && idCourse > 0) {
+      UpdateCourse(data);
+    } else {
+      CreateCourse(data);
+    }
   };
   useEffect(() => {
     try {
@@ -92,7 +136,8 @@ export default function InfoCourse() {
     localCourse && form.reset(defaultValues);
   }, [localCourse]);
   const getDetailCourse = (value: any) => {
-    console.log({ getDetailCourse: value });
+    typeof setIdCourse === "function" && setIdCourse(value.courseDetail?.id);
+    typeof setIdClass === "function" && setIdClass(value.id);
     axiosAuth
       .get(`/Course/${value.courseDetail.id}/classes/${value.id}`)
       .then((res) => {
@@ -115,15 +160,16 @@ export default function InfoCourse() {
         <p className="text-[#101828] font-semibold text-[18px]">
           HRMS Course Information
         </p>
-        <Button
-          variant="default"
-          className="text-[14px]"
-          onClick={() => setLocalCourse(true)}
-        >
-          Create Local Course
-        </Button>
+        {!localCourse && (
+          <Button
+            variant="default"
+            className="text-[14px]"
+            onClick={() => {setLocalCourse(true);setActionCourse(true)}}
+          >
+            Create Local Course
+          </Button>
+        )}
       </div>
-
       {!localCourse && (
         <>
           <Label>Course</Label>{" "}
@@ -231,7 +277,7 @@ export default function InfoCourse() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Held Date</FormLabel>
-                  <Popover >
+                  <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -265,8 +311,21 @@ export default function InfoCourse() {
                 </FormItem>
               )}
             />
+            {localCourse && (
+              <FormField
+                control={form.control}
+                name="referenceClass"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Reference Class</FormLabel>
+                    <Input placeholder="Not specified" {...field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
-          {localCourse && (
+          {actionCourse && (
             <div className="flex justify-end items-center gap-[12px]">
               <Button
                 variant="outline"
