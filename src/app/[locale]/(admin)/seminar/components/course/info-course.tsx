@@ -73,7 +73,7 @@ export default function InfoCourse({
   const [listCourseHRMS, setlistCourseHRMS] = useState<any>([]);
   const [localCourse, setLocalCourse] = useState<boolean>(false);
   const [itemCourse, setItemCourse] = useState({});
-  const [actionCourse, setActionCourse] = useState<boolean>(false)
+  const [actionCourse, setActionCourse] = useState<boolean>(false);
   const defaultValues: Partial<CourseFormValues> = {
     id: 0,
     name: "",
@@ -110,7 +110,7 @@ export default function InfoCourse({
       // };
       form.reset(res.data);
       typeof setIdCourse === "function" && setIdCourse(res.data.id);
-      setActionCourse(false)
+      setActionCourse(false);
     });
   };
   const onSubmit = async (data: CourseFormValues) => {
@@ -164,7 +164,10 @@ export default function InfoCourse({
           <Button
             variant="default"
             className="text-[14px]"
-            onClick={() => {setLocalCourse(true);setActionCourse(true)}}
+            onClick={() => {
+              setLocalCourse(true);
+              setActionCourse(true);
+            }}
           >
             Create Local Course
           </Button>
@@ -328,9 +331,12 @@ export default function InfoCourse({
           {actionCourse && (
             <div className="flex justify-end items-center gap-[12px]">
               <Button
+                type="button"
                 variant="outline"
                 className="border-none text-[14px]"
-                onClick={() => form.reset(defaultValues)}
+                onClick={() => {
+                  form.reset(defaultValues);
+                }}
               >
                 Cancel
               </Button>

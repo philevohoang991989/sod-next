@@ -8,6 +8,7 @@ import InfoSeminar from "../components/info-seminar";
 export default function CreateSeminar() {
   const [idClass, setIdClass] = useState(0);
   const [idCourse, setIdCourse] = useState(0);
+  const [idSeminar, setIdSeminar] = useState(0)
   console.log({ idClass, idCourse });
 
   return (
@@ -21,7 +22,7 @@ export default function CreateSeminar() {
           setIdClass={setIdClass}
         />
         <div className="flex justify-start rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
-          <ListSeminar />
+          <ListSeminar idSeminar = {idSeminar} />
           <InfoSeminar/>
         </div>
       </div>

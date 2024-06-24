@@ -13,7 +13,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <SideNav items={NavItems} />
       </div>
       <MobileNav />
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 relative overflow-y-auto">{children}</div>
     </div>
   );
 }

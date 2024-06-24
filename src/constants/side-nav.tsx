@@ -5,7 +5,7 @@ export const NavItems: NavItem[] = [
   {
     title: "Create",
     icon: Edit,
-    href: "/create",
+    href: "/seminar/create",
     color: "text-[#B4D1DF]",
   },
   {
