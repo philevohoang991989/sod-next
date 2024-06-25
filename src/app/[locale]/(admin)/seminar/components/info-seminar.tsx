@@ -37,6 +37,10 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 
+type Props = {
+  idSeminar?: any;
+};
+
 const seminarFormSchema = z.object({
   id: z.number(),
   seminarName: z.string().min(1, {
@@ -56,7 +60,7 @@ const seminarFormSchema = z.object({
 
 type SeminarCourseFormValues = z.infer<typeof seminarFormSchema>;
 
-export default function InfoSeminar() {
+export default function InfoSeminar({ idSeminar }: Props) {
   const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
   const [listDivision, setListDivision] = useState([]);
