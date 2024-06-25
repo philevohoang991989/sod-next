@@ -66,7 +66,6 @@ export default function InfoCourse({
   setIdCourse,
   setIdClass,
 }: Props) {
-  console.log({ idCourse });
 
   const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();

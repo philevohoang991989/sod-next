@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useParams } from "next/navigation";
 
 type Props = {
   idSeminar?: any;
@@ -62,6 +63,7 @@ type SeminarCourseFormValues = z.infer<typeof seminarFormSchema>;
 
 export default function InfoSeminar({ idSeminar }: Props) {
   const { data: session } = useSession();
+  const params: any = useParams();
   const axiosAuth = useAxiosAuth();
   const [listDivision, setListDivision] = useState([]);
   const defaultValues: Partial<SeminarCourseFormValues> = {
@@ -85,7 +87,6 @@ export default function InfoSeminar({ idSeminar }: Props) {
   const onSubmit = async (data: SeminarCourseFormValues) => {
     console.log({ data });
   };
-  console.log({ listDivision });
 
   useEffect(() => {
     try {
@@ -99,17 +100,39 @@ export default function InfoSeminar({ idSeminar }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
-
-  const items = [
-    {
-      id: "recents",
-      label: "Recents",
-    },
-    {
-      id: "home",
-      label: "Home",
-    },
-  ];
+  useEffect(() => {
+    try {
+      const res =
+        session &&
+        params.id &&
+        axiosAuth.get(
+          ENDPOINT.SEMINAR_DETAIL.replace(
+            ":id",
+            idSeminar ? idSeminar : params.id
+          )
+        );
+      res?.then((res) => {
+        const defaultValues = {
+          id: res.data.id,
+          seminarName: res.data.seminarName,
+          isPublishNow: res.data.isPublishNow,
+          isActive: res.data.isActive,
+          isRightToICU: res.data.isRightToICU,
+          isBelongHRMS: res.data.isBelongHRMS,
+          courseId: res.data.courseId,
+          publishStart: res.data.publishStart?new Date(res.data.publishStart):undefined,
+          publishEnd: res.data.publishEnd? new Date(res.data.publishEnd): undefined,
+          divisionId: (res.data.divisionId).toString(),
+          remark: res.data.remark,
+          thumbnailId: res.data.thumbnailId,
+        };
+        form.reset(defaultValues);
+      });
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      // Optionally handle specific error cases here
+    }
+  }, [session, idSeminar]);
   return (
     <div className="flex grow p-[1.5rem]">
       <Form {...form}>
@@ -159,7 +182,7 @@ export default function InfoSeminar({ idSeminar }: Props) {
               name="divisionId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mode of Training</FormLabel>
+                  <FormLabel>Division</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}

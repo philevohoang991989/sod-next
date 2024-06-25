@@ -3,5 +3,6 @@ export enum ENDPOINT {
     LIST_COURSE_HRMS= 'Course/Export/DropDown',
     CREATE_COURSE= 'Course',
     LIST_SIBLING='Seminar/:id/sibling',
-    DIVISION_ALL= "Division/Export"
+    DIVISION_ALL= 'Division/Export',
+    SEMINAR_DETAIL='Seminar/:id'
 }

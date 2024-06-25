@@ -9,6 +9,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const [idClass, setIdClass] = useState(0);
   const [idCourse, setIdCourse] = useState(0);
   const [idSeminar, setIdSeminar] = useState(0);
+  
   return (
     <PageLayout title="Edit Seminar">
       {" "}

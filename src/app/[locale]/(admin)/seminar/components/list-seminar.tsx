@@ -30,12 +30,12 @@ export default function ListSeminar({ idSeminar, setIdSeminar }: Props) {
     setIsDragging(!isDragging);
     console.log("handleReorderClick");
   };
+  
   useEffect(() => {
     session && params.id !== undefined &&
       axiosAuth
         .get(ENDPOINT.LIST_SIBLING.replace(":id", params.id))
         .then((res: any) => {
-          console.log({ res });
           setItems(res.data)
         });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,7 +69,7 @@ export default function ListSeminar({ idSeminar, setIdSeminar }: Props) {
             onDragEnd={() => setIsDragging(false)}
             draggable={isDragging}
           >
-            <RadioGroup defaultValue="card" className="flex flex-col gap-3">
+            <RadioGroup defaultValue={idSeminar?`${idSeminar}`:params.id} className="flex flex-col gap-3">
               {items.map((item: any) => (
                 <Reorder.Item value={item} key={item.id}>
                   <div className="item">
