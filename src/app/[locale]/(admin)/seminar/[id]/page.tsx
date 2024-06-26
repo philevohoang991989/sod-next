@@ -9,6 +9,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const [idClass, setIdClass] = useState(0);
   const [idCourse, setIdCourse] = useState(0);
   const [idSeminar, setIdSeminar] = useState(0);
+  const [defaultSeminar, setDefaultSeminar] = useState()
   
   return (
     <PageLayout title="Edit Seminar">
@@ -27,8 +28,9 @@ export default function Page({ params }: { params: { id: string } }) {
             idClass={idClass}
             idCourse={idCourse}
             setIdSeminar={setIdSeminar}
+            setDefaultSeminar={setDefaultSeminar}
           />
-          <InfoSeminar idSeminar={idSeminar} />
+          <InfoSeminar idSeminar={idSeminar} idClass={idClass} idCourse={idCourse} defaultSeminar={defaultSeminar} />
         </div>
       </div>
     </PageLayout>

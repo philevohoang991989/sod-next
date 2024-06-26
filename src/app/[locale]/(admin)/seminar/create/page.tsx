@@ -22,7 +22,7 @@ export default function CreateSeminar() {
           setIdClass={setIdClass}
         />
         <div className="flex justify-start rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
-          <ListSeminar idSeminar = {idSeminar} />
+          <ListSeminar idSeminar = {idSeminar} idCourse ={idCourse} idClass={idClass} />
           <InfoSeminar/>
         </div>
       </div>

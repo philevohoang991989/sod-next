@@ -14,32 +14,66 @@ type Props = {
   idClass?: any;
   idSeminar?: any;
   setIdSeminar?: (value: any) => void;
+  setDefaultSeminar?: (value: any) => void;
 };
-export default function ListSeminar({ idSeminar, setIdSeminar }: Props) {
+export default function ListSeminar({
+  idSeminar,
+  setIdSeminar,
+  idCourse,
+  idClass,
+  setDefaultSeminar
+}: Props) {
   const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
   const [items, setItems] = useState<any>([]);
   const [isDragging, setIsDragging] = useState(true);
   const pathname = usePathname();
-  const params: any = useParams()
+  const params: any = useParams();
+  const [disable, setDisable] = useState<boolean>(true);
   const handleDelete = (id: any) => {
-    setItems((prevUsers: any) => prevUsers.filter((item: any) => item.id !== id));
+    setItems((prevUsers: any) =>
+      prevUsers.filter((item: any) => item.id !== id)
+    );
+  };
+  const defaultSeminar = {
+    id: 0,
+    seminarName: '',
+    isPublishNow: false,
+    isActive: false,
+    isRightToICU: false,
+    isBelongHRMS: false,
+    courseId: null,
+    publishStart: '',
+    publishEnd: '',
+    divisionId: null,
+    thumbnailId: null,
+    remark: '',
   };
   const handleReorderClick = () => {
     // Implement logic to toggle reordering, e.g., showing a message or disabling/enabling the button
     setIsDragging(!isDragging);
     console.log("handleReorderClick");
   };
-  
+
   useEffect(() => {
-    session && params.id !== undefined &&
+    session &&
+      params.id !== undefined &&
       axiosAuth
         .get(ENDPOINT.LIST_SIBLING.replace(":id", params.id))
         .then((res: any) => {
-          setItems(res.data)
+          setItems(res.data.sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0)));
         });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
+  useEffect(() => {
+    (idCourse !== 0 || idClass !== 0) && setDisable(false);
+  }, [idCourse, idClass]);
+  const addSeminar=()=>{
+    const newSeminar = { ...defaultSeminar };
+    setItems((prevItems: any) => [...prevItems, newSeminar]);
+    typeof setDefaultSeminar === "function" && setDefaultSeminar(defaultSeminar)
+  }
+
   return (
     <div className="w-max-content border-r-[1px] border-r-[#D0D5DD]">
       <div className="px-[1.5rem] py-[1rem] border-b-[1px] border-[#D0D5DD] text-[18px] font-semibold text-[#101828]">
@@ -49,13 +83,16 @@ export default function ListSeminar({ idSeminar, setIdSeminar }: Props) {
         <div className="flex gap-[12px] relative">
           <Button
             className="w-[100%] bg-[#EFF8FF] text-[#0D6999]"
-            disabled={pathname === "/seminar/create"}
+            disabled={pathname === "/seminar/create" && disable}
+            onClick={()=>addSeminar()}
           >
             Add another Seminar
           </Button>
           <Button
             className="w-[100%]"
-            disabled={pathname === "/seminar/create"}
+            disabled={
+              (pathname === "/seminar/create" && disable) || items.length === 0
+            }
             onClick={handleReorderClick}
           >
             Re-order List
@@ -69,7 +106,10 @@ export default function ListSeminar({ idSeminar, setIdSeminar }: Props) {
             onDragEnd={() => setIsDragging(false)}
             draggable={isDragging}
           >
-            <RadioGroup defaultValue={idSeminar?`${idSeminar}`:params.id} className="flex flex-col gap-3">
+            <RadioGroup
+              defaultValue={idSeminar ? `${idSeminar}` : params.id}
+              className="flex flex-col gap-3"
+            >
               {items.map((item: any) => (
                 <Reorder.Item value={item} key={item.id}>
                   <div className="item">
@@ -81,7 +121,11 @@ export default function ListSeminar({ idSeminar, setIdSeminar }: Props) {
                     <Label
                       htmlFor={`${item.id}`}
                       className="flex items-center justify-between rounded-md border-[1px] border-[#D0D5DD] bg-white p-4 hover:bg-[#EFF8FF] hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-[#EFF8FF] [&:has([data-state=checked])]:border-primary"
-                      onClick={()=>typeof setIdSeminar === "function" && setIdSeminar(item.id)}
+                      onClick={() =>
+                        {typeof setIdSeminar === "function" && setIdSeminar(item.id);
+                        console.log({item: item.id});}
+                        
+                      }
                     >
                       <div className="text-[14px] font-medium text-[#101828]">
                         {item.seminarName}

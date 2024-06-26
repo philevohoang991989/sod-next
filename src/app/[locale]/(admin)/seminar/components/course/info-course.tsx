@@ -66,7 +66,6 @@ export default function InfoCourse({
   setIdCourse,
   setIdClass,
 }: Props) {
-
   const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
   const [listCourseHRMS, setlistCourseHRMS] = useState<any>([]);
@@ -107,8 +106,8 @@ export default function InfoCourse({
         subject: data.subject,
         targetParticipant: data.targetParticipant,
         isLocal: localCourse,
-      }
-    }
+      },
+    };
     axiosAuth.post(ENDPOINT.CREATE_CLASS, newClassCourse).then((res) => {
       console.log({ res });
 
@@ -146,9 +145,12 @@ export default function InfoCourse({
       // Optionally handle specific error cases here
     }
   }, [session]);
+  console.log({ idCourse });
+
   useEffect(() => {
     localCourse && form.reset(defaultValues);
   }, [localCourse]);
+
   const getDetailCourse = (value: any) => {
     typeof setIdCourse === "function" && setIdCourse(value.courseDetail?.id);
     typeof setIdClass === "function" && setIdClass(value.id);
@@ -167,13 +169,36 @@ export default function InfoCourse({
         form.reset(defaultValues);
       });
   };
+  useEffect(() => {
+    session &&
+      idCourse !== 0 &&
+      idClass !== 0 &&
+      axiosAuth.get(`/Course/${idCourse}/classes/${idClass}`).then((res) => {
+        const defaultValues = {
+          name: res.data.name,
+          curriculum: res.data.curriculum,
+          category: res.data.category,
+          modelOfTraining: res.data.modelOfTraining,
+          subject: res.data.subject,
+          targetParticipant: res.data.targetParticipant,
+          heldDate: res.data.heldDate,
+        };
+        form.reset(defaultValues);
+      });
+  });
 
   return (
     <div className="p-[1.5rem] rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
       <div className="flex justify-between items-start">
-        <p className="text-[#101828] font-semibold text-[18px]">
-          HRMS Course Information
-        </p>
+        {!localCourse ? (
+          <p className="text-[#101828] font-semibold text-[18px]">
+            HRMS Course Information
+          </p>
+        ) : (
+          <p className="text-[#101828] font-semibold text-[18px]">
+            Local Course Information
+          </p>
+        )}
         {!localCourse && (
           <Button
             variant="default"

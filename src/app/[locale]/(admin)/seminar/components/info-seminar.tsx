@@ -40,6 +40,9 @@ import { useParams } from "next/navigation";
 
 type Props = {
   idSeminar?: any;
+  idCourse?: any;
+  idClass?: any;
+  defaultSeminar?: any;
 };
 
 const seminarFormSchema = z.object({
@@ -61,7 +64,12 @@ const seminarFormSchema = z.object({
 
 type SeminarCourseFormValues = z.infer<typeof seminarFormSchema>;
 
-export default function InfoSeminar({ idSeminar }: Props) {
+export default function InfoSeminar({
+  idSeminar,
+  idClass,
+  idCourse,
+  defaultSeminar,
+}: Props) {
   const { data: session } = useSession();
   const params: any = useParams();
   const axiosAuth = useAxiosAuth();
@@ -86,6 +94,23 @@ export default function InfoSeminar({ idSeminar }: Props) {
   });
   const onSubmit = async (data: SeminarCourseFormValues) => {
     console.log({ data });
+
+    if (idSeminar === 0) {
+      console.log("create");
+      let dataPost = {
+        ...data,
+        classId: idClass,
+        courseId: idCourse,
+      };
+      axiosAuth
+        .post(ENDPOINT.CREATE_SEMINAR, { data: dataPost })
+        .then((res) => {
+          console.log({ res });
+        });
+    } else {
+      console.log("update");
+    }
+    console.log({ data });
   };
 
   useEffect(() => {
@@ -102,38 +127,47 @@ export default function InfoSeminar({ idSeminar }: Props) {
   }, [session]);
   useEffect(() => {
     try {
-      const res =
+      if (idSeminar === 0) {
+        form.reset(defaultSeminar);
+      } else {
         session &&
-        params.id &&
-        axiosAuth.get(
-          ENDPOINT.SEMINAR_DETAIL.replace(
-            ":id",
-            idSeminar ? idSeminar : params.id
-          )
-        );
-      res?.then((res: any) => {
-        const defaultValues = {
-          id: res.data.id,
-          seminarName: res.data.seminarName,
-          isPublishNow: res.data.isPublishNow,
-          isActive: res.data.isActive,
-          isRightToICU: res.data.isRightToICU,
-          isBelongHRMS: res.data.isBelongHRMS,
-          courseId: res.data.courseId,
-          publishStart: res.data.publishStart?new Date(res.data.publishStart):undefined,
-          publishEnd: res.data.publishEnd? new Date(res.data.publishEnd): undefined,
-          divisionId: (res.data.divisionId).toString(),
-          remark: res.data.remark,
-          thumbnailId: res.data.thumbnailId,
-        };
-        form.reset(defaultValues);
-      });
+          params.id &&
+          axiosAuth
+            .get(
+              ENDPOINT.SEMINAR_DETAIL.replace(
+                ":id",
+                idSeminar && idSeminar !== 0 ? idSeminar : params.id
+              )
+            )
+            .then((res: any) => {
+              const defaultValues = {
+                id: res.data.id,
+                seminarName: res.data.seminarName,
+                isPublishNow: res.data.isPublishNow,
+                isActive: res.data.isActive,
+                isRightToICU: res.data.isRightToICU,
+                isBelongHRMS: res.data.isBelongHRMS,
+                courseId: res.data.courseId,
+                publishStart: res.data.publishStart
+                  ? new Date(res.data.publishStart)
+                  : undefined,
+                publishEnd: res.data.publishEnd
+                  ? new Date(res.data.publishEnd)
+                  : undefined,
+                divisionId: res.data.divisionId.toString(),
+                remark: res.data.remark,
+                thumbnailId: res.data.thumbnailId,
+              };
+              form.reset(defaultValues);
+            });
+      }
     } catch (error) {
       console.error("Error fetching courses:", error);
       // Optionally handle specific error cases here
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, idSeminar]);
+
   return (
     <div className="flex grow p-[1.5rem]">
       <Form {...form}>
