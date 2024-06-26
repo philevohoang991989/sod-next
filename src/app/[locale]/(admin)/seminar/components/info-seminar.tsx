@@ -111,7 +111,7 @@ export default function InfoSeminar({ idSeminar }: Props) {
             idSeminar ? idSeminar : params.id
           )
         );
-      res?.then((res) => {
+      res?.then((res: any) => {
         const defaultValues = {
           id: res.data.id,
           seminarName: res.data.seminarName,
@@ -132,6 +132,7 @@ export default function InfoSeminar({ idSeminar }: Props) {
       console.error("Error fetching courses:", error);
       // Optionally handle specific error cases here
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, idSeminar]);
   return (
     <div className="flex grow p-[1.5rem]">

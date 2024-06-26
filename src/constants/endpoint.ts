@@ -4,5 +4,6 @@ export enum ENDPOINT {
     CREATE_COURSE= 'Course',
     LIST_SIBLING='Seminar/:id/sibling',
     DIVISION_ALL= 'Division/Export',
-    SEMINAR_DETAIL='Seminar/:id'
+    SEMINAR_DETAIL='Seminar/:id',
+    CREATE_CLASS = 'Class',
 }

@@ -23,3 +23,10 @@ export interface TypeCourse {
     heldDate?: Date;
     classId?: number;
   }
+  export interface CreateClass {
+    id?: number
+    name?: string
+    heldDate?: Date
+    duration?: number
+    courseDetail? : TypeCourse
+}

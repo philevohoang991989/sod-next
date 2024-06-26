@@ -26,7 +26,7 @@ import { ENDPOINT } from "@/constants/endpoint";
 import { format } from "date-fns";
 import useAxiosAuth from "@/lib/hook/useAxiosAuth";
 import { useSession } from "next-auth/react";
-import { TypeCourse } from "@/types";
+import { CreateClass, TypeCourse } from "@/types";
 import { Label } from "@/components/ui/label";
 import { CalendarIcon } from "lucide-react";
 import {
@@ -95,7 +95,21 @@ export default function InfoCourse({
   };
   const CreateCourse = (data: TypeCourse) => {
     console.log("CreateCourse", data);
-    axiosAuth.post(ENDPOINT.CREATE_COURSE, data).then((res) => {
+    const newClassCourse: CreateClass = {
+      name: data.referenceClass,
+      heldDate: data.heldDate,
+      courseDetail: {
+        id: 0,
+        name: data.name,
+        curriculum: data.curriculum,
+        category: data.category,
+        modelOfTraining: data.modelOfTraining,
+        subject: data.subject,
+        targetParticipant: data.targetParticipant,
+        isLocal: localCourse,
+      }
+    }
+    axiosAuth.post(ENDPOINT.CREATE_CLASS, newClassCourse).then((res) => {
       console.log({ res });
 
       // const defaultValues = {
@@ -107,8 +121,9 @@ export default function InfoCourse({
       //   targetParticipant: res.data.targetParticipant,
       //   heldDate: res.data.heldDate,
       // };
-      form.reset(res.data);
-      typeof setIdCourse === "function" && setIdCourse(res.data.id);
+      form.reset(data);
+      typeof setIdCourse === "function" && setIdCourse(res.data.courseId);
+      typeof setIdClass === "function" && setIdClass(res.data.id);
       setActionCourse(false);
     });
   };
