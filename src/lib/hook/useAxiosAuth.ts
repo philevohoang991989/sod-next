@@ -32,7 +32,7 @@ const useApiAuth = () => {
       if (error?.response?.status === 401 && !prevRequest?.sent) {
         prevRequest.sent = true;
         prevRequest.headers["Authorization"] = `Bearer ${session?.token}`;
-        // signOut()
+        signOut()
         return ApiAuth(prevRequest);
       }
       return Promise.reject(error);
