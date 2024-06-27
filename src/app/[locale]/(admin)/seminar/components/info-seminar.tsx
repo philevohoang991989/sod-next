@@ -37,6 +37,7 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
 
 type Props = {
   idSeminar?: any;
@@ -70,6 +71,8 @@ export default function InfoSeminar({
   idCourse,
   defaultSeminar,
 }: Props) {
+  const seminar = useSelector((state: any) => state.seminar);
+  
   const { data: session } = useSession();
   const params: any = useParams();
   const axiosAuth = useAxiosAuth();
@@ -110,7 +113,6 @@ export default function InfoSeminar({
     } else {
       console.log("update");
     }
-    console.log({ data });
   };
 
   useEffect(() => {
@@ -126,8 +128,11 @@ export default function InfoSeminar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
   useEffect(() => {
+
     try {
-      if (idSeminar === 0) {
+      if (seminar.idSeminar === 0) {
+        console.log('seminar 0');
+        
         form.reset(defaultSeminar);
       } else {
         session &&
@@ -136,7 +141,7 @@ export default function InfoSeminar({
             .get(
               ENDPOINT.SEMINAR_DETAIL.replace(
                 ":id",
-                idSeminar && idSeminar !== 0 ? idSeminar : params.id
+                seminar.idSeminar &&  seminar.idSeminar !== 0 ?  seminar.idSeminar : params.id
               )
             )
             .then((res: any) => {
@@ -166,7 +171,7 @@ export default function InfoSeminar({
       // Optionally handle specific error cases here
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, idSeminar]);
+  }, [session, seminar.idSeminar]);
 
   return (
     <div className="flex grow p-[1.5rem]">

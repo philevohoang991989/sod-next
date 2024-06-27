@@ -17,20 +17,11 @@ export default function Page({ params }: { params: { id: string } }) {
       <div className="flex flex-col gap-[1.5rem]">
         {" "}
         <InfoCourse
-          idClass={idClass}
-          idCourse={idCourse}
-          setIdCourse={setIdCourse}
-          setIdClass={setIdClass}
         />
         <div className="flex justify-start rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
           <ListSeminar
-            idSeminar={idSeminar}
-            idClass={idClass}
-            idCourse={idCourse}
-            setIdSeminar={setIdSeminar}
-            setDefaultSeminar={setDefaultSeminar}
           />
-          <InfoSeminar idSeminar={idSeminar} idClass={idClass} idCourse={idCourse} defaultSeminar={defaultSeminar} />
+          <InfoSeminar />
         </div>
       </div>
     </PageLayout>

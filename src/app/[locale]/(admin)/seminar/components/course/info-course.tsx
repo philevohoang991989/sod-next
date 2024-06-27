@@ -36,6 +36,9 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { updateIdClass, updateIdCourse, updateIdSeminar } from "@/redux/slices/seminarSlice";
+import { useParams, usePathname } from "next/navigation";
 
 const courseFormSchema = z.object({
   id: z.number(),
@@ -48,30 +51,21 @@ const courseFormSchema = z.object({
   isLocal: z.boolean(),
   courseCode: z.string(),
   heldDate: z.date().optional(),
-  referenceClass: z.string().optional(),
+  referenceClass: z.string(),
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
 
-type Props = {
-  idCourse: number;
-  idClass: number;
-  setIdCourse?: (value: any) => void;
-  setIdClass?: (value: any) => void;
-};
-
-export default function InfoCourse({
-  idCourse,
-  idClass,
-  setIdCourse,
-  setIdClass,
-}: Props) {
+export default function InfoCourse() {
+  const pathname = usePathname();
+  const dispatch = useDispatch();
+  const seminar = useSelector((state: any) => state.seminar);
   const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
   const [listCourseHRMS, setlistCourseHRMS] = useState<any>([]);
   const [localCourse, setLocalCourse] = useState<boolean>(false);
-  const [itemCourse, setItemCourse] = useState({});
   const [actionCourse, setActionCourse] = useState<boolean>(false);
+  const [disable, setDisable] = useState<boolean>(false);
   const defaultValues: Partial<CourseFormValues> = {
     id: 0,
     name: "",
@@ -109,26 +103,15 @@ export default function InfoCourse({
       },
     };
     axiosAuth.post(ENDPOINT.CREATE_CLASS, newClassCourse).then((res) => {
-      console.log({ res });
-
-      // const defaultValues = {
-      //   name: res.data.name,
-      //   curriculum: res.data.curriculum,
-      //   category: res.data.category,
-      //   modelOfTraining: res.data.modelOfTraining,
-      //   subject: res.data.subject,
-      //   targetParticipant: res.data.targetParticipant,
-      //   heldDate: res.data.heldDate,
-      // };
       form.reset(data);
-      typeof setIdCourse === "function" && setIdCourse(res.data.courseId);
-      typeof setIdClass === "function" && setIdClass(res.data.id);
+      dispatch(updateIdCourse(res.data.courseId));
+      dispatch(updateIdClass(res.data.id));
       setActionCourse(false);
     });
   };
+  
   const onSubmit = async (data: CourseFormValues) => {
-    console.log({ data });
-    if (idCourse && idCourse > 0) {
+    if (seminar.idClass && seminar.idCourse > 0) {
       UpdateCourse(data);
     } else {
       CreateCourse(data);
@@ -145,15 +128,14 @@ export default function InfoCourse({
       // Optionally handle specific error cases here
     }
   }, [session]);
-  console.log({ idCourse });
 
   useEffect(() => {
     localCourse && form.reset(defaultValues);
   }, [localCourse]);
 
   const getDetailCourse = (value: any) => {
-    typeof setIdCourse === "function" && setIdCourse(value.courseDetail?.id);
-    typeof setIdClass === "function" && setIdClass(value.id);
+    dispatch(updateIdCourse(value.courseDetail?.id));
+    dispatch(updateIdClass(value.id));
     axiosAuth
       .get(`/Course/${value.courseDetail.id}/classes/${value.id}`)
       .then((res) => {
@@ -170,27 +152,37 @@ export default function InfoCourse({
       });
   };
   useEffect(() => {
-    session &&
-      idCourse !== 0 &&
-      idClass !== 0 &&
-      axiosAuth.get(`/Course/${idCourse}/classes/${idClass}`).then((res) => {
-        const defaultValues = {
-          name: res.data.name,
-          curriculum: res.data.curriculum,
-          category: res.data.category,
-          modelOfTraining: res.data.modelOfTraining,
-          subject: res.data.subject,
-          targetParticipant: res.data.targetParticipant,
-          heldDate: res.data.heldDate,
-        };
-        form.reset(defaultValues);
-      });
-  });
+    session && seminar.idCourse !== 0 && seminar.idClass !== 0 && seminar.idSeminar !== 0 && pathname !== "/seminar/create"
+      ? axiosAuth
+          .get(`/Course/${seminar.idCourse}/classes/${seminar.idClass}`)
+          .then((res) => {
+            const defaultValues = {
+              name: res.data.name,
+              curriculum: res.data.curriculum,
+              category: res.data.category,
+              modelOfTraining: res.data.modelOfTraining,
+              subject: res.data.subject,
+              targetParticipant: res.data.targetParticipant,
+              heldDate: res.data.heldDate,
+            };
+            form.reset(defaultValues);
+            !res.data.isLocal && setDisable(true);
+          })
+      : form.reset(defaultValues);
+  }, [seminar.idCourse, seminar.idClass, seminar.idSeminar]);
+  useEffect(() => {
+    if (pathname === "/seminar/create") {
+      dispatch(updateIdClass(0));
+      dispatch(updateIdCourse(0));
+      dispatch(updateIdSeminar(0));
+      form.reset(defaultValues)
+    }
+  }, []);
 
   return (
     <div className="p-[1.5rem] rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
       <div className="flex justify-between items-start">
-        {!localCourse ? (
+        {!localCourse && pathname === "/seminar/create" ? (
           <p className="text-[#101828] font-semibold text-[18px]">
             HRMS Course Information
           </p>
@@ -199,25 +191,25 @@ export default function InfoCourse({
             Local Course Information
           </p>
         )}
-        {!localCourse && (
-          <Button
-            variant="default"
-            className="text-[14px]"
-            onClick={() => {
-              setLocalCourse(true);
-              setActionCourse(true);
-            }}
-          >
-            Create Local Course
-          </Button>
-        )}
+        {(!localCourse || seminar.idSeminar !== 0) &&
+          pathname === "/seminar/create" && (
+            <Button
+              variant="default"
+              className="text-[14px]"
+              onClick={() => {
+                setLocalCourse(true);
+                setActionCourse(true);
+              }}
+            >
+              Create Local Course
+            </Button>
+          )}
       </div>
-      {!localCourse && (
+      {!localCourse && pathname === "/seminar/create" && (
         <>
           <Label>Course</Label>{" "}
           <Select
             onValueChange={(value) => {
-              setItemCourse(value);
               getDetailCourse(value);
             }}
           >
@@ -249,7 +241,11 @@ export default function InfoCourse({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Course Name</FormLabel>
-                  <Input placeholder="Not specified" {...field} />
+                  <Input
+                    placeholder="Not specified"
+                    disabled={disable}
+                    {...field}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -262,7 +258,7 @@ export default function InfoCourse({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Course Curriculum</FormLabel>
-                  <Input placeholder="Not specified" {...field} />
+                  <Input placeholder="Not specified" disabled={disable} {...field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -273,7 +269,7 @@ export default function InfoCourse({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Course Catgory</FormLabel>
-                  <Input placeholder="Not specified" {...field} />
+                  <Input placeholder="Not specified" disabled={disable} {...field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -284,7 +280,7 @@ export default function InfoCourse({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Mode of Training</FormLabel>
-                  <Input placeholder="Not specified" {...field} />
+                  <Input placeholder="Not specified" disabled={disable} {...field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -294,8 +290,8 @@ export default function InfoCourse({
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mode of Training</FormLabel>
-                  <Input placeholder="Not specified" {...field} />
+                  <FormLabel>Course Subject</FormLabel>
+                  <Input placeholder="Not specified" disabled={disable} {...field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -306,7 +302,7 @@ export default function InfoCourse({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Target Participant</FormLabel>
-                  <Input placeholder="Not specified" {...field} />
+                  <Input placeholder="Not specified" disabled={disable} {...field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -324,6 +320,7 @@ export default function InfoCourse({
                       <FormControl>
                         <Button
                           variant={"outline"}
+                          disabled={disable}
                           className={cn(
                             "pl-3 text-left font-normal w-[100%] h-[44px]",
                             !field.value && "text-muted-foreground"

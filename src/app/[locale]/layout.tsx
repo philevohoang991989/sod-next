@@ -1,41 +1,42 @@
-import clsx from 'clsx';
-import {Inter} from 'next/font/google';
-import {NextIntlClientProvider} from 'next-intl';
+import clsx from "clsx";
+import { Inter } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
 import {
   getMessages,
   getTranslations,
-  unstable_setRequestLocale
-} from 'next-intl/server';
-import {ReactNode} from 'react';
-import Navigation from '@/components/Navigation';
-import {locales} from '@/config';
-import Providers from '@/components/providers';
-import { Toaster } from '@/components/ui/toaster';
+  unstable_setRequestLocale,
+} from "next-intl/server";
+import { ReactNode } from "react";
+import Navigation from "@/components/Navigation";
+import { locales } from "@/config";
+import Providers from "@/components/providers";
+import { Toaster } from "@/components/ui/toaster";
+import ProvidersRedux from "@/redux/Providers";
 
-const inter = Inter({subsets: ['latin']});
+const inter = Inter({ subsets: ["latin"] });
 
 type Props = {
   children: ReactNode;
-  params: {locale: string};
+  params: { locale: string };
 };
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({locale}));
+  return locales.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({
-  params: {locale}
-}: Omit<Props, 'children'>) {
-  const t = await getTranslations({locale, namespace: 'LocaleLayout'});
+  params: { locale },
+}: Omit<Props, "children">) {
+  const t = await getTranslations({ locale, namespace: "LocaleLayout" });
 
   return {
-    title: t('title')
+    title: t("title"),
   };
 }
 
 export default async function LocaleLayout({
   children,
-  params: {locale}
+  params: { locale },
 }: Props) {
   // Enable static rendering
   unstable_setRequestLocale(locale);
@@ -46,13 +47,15 @@ export default async function LocaleLayout({
 
   return (
     <html className="h-full" lang={locale}>
-      <body className={clsx(inter.className, 'flex h-full flex-col')}>
-      <Providers>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-          <Toaster />
-        </NextIntlClientProvider>
-        </Providers>
+      <body className={clsx(inter.className, "flex h-full flex-col")}>
+        <ProvidersRedux>
+          <Providers>
+            <NextIntlClientProvider messages={messages}>
+              {children}
+              <Toaster />
+            </NextIntlClientProvider>
+          </Providers>
+        </ProvidersRedux>
       </body>
     </html>
   );
