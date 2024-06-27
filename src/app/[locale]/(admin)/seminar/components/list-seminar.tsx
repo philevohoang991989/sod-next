@@ -79,7 +79,7 @@ export default function ListSeminar() {
         <div className="flex gap-[12px] relative">
           <Button
             className="w-[100%] bg-[#EFF8FF] text-[#0D6999]"
-            disabled={pathname === "/seminar/create"}
+            // disabled={pathname === "/seminar/create"}
             onClick={() => addSeminar()}
           >
             Add another Seminar

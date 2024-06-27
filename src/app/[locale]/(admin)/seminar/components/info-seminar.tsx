@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Upload from "@/assets/icons/upload.svg";
 import useAxiosAuth from "@/lib/hook/useAxiosAuth";
 import { ENDPOINT } from "@/constants/endpoint";
 import {
@@ -38,6 +39,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
+import Image from "next/image";
+import ReviewImage from "@/components/ReviewImage";
 
 type Props = {
   idSeminar?: any;
@@ -61,22 +64,21 @@ const seminarFormSchema = z.object({
   divisionId: z.string(),
   remark: z.string(),
   thumbnailId: z.number().optional(),
+  images: z.string().url(),
 });
 
 type SeminarCourseFormValues = z.infer<typeof seminarFormSchema>;
 
-export default function InfoSeminar({
-  idSeminar,
-  idClass,
-  idCourse,
-  defaultSeminar,
-}: Props) {
+export default function InfoSeminar() {
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const seminar = useSelector((state: any) => state.seminar);
-  
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [file, setFile] = useState<File | null>(null);
   const { data: session } = useSession();
   const params: any = useParams();
   const axiosAuth = useAxiosAuth();
   const [listDivision, setListDivision] = useState([]);
+
   const defaultValues: Partial<SeminarCourseFormValues> = {
     id: 0,
     seminarName: "",
@@ -95,21 +97,44 @@ export default function InfoSeminar({
     resolver: zodResolver(seminarFormSchema),
     defaultValues,
   });
+  const image = form.watch("images");
+  const getSeminarData = (data: any) => {
+    const value = form.getValues;
+    console.log({ value });
+
+    return {
+      ...data,
+      seminarName: data.seminarName ?? "",
+      isActive: data.isActive ?? false,
+      isPublishNow: data.isPublishNow ?? false,
+      isRightToICU: data.isRightToICU ?? false,
+      isBelongHRMS: data.isBelongHRMS ?? false,
+      publishStart: data.publishStart
+        ? moment(data.publishStart).toISOString()
+        : null,
+      publishEnd: data.publishEnd
+        ? moment(data.publishEnd).toISOString()
+        : null,
+    };
+  };
+
   const onSubmit = async (data: SeminarCourseFormValues) => {
     console.log({ data });
+    const seminarData = getSeminarData(data);
+    console.log({ seminarData });
 
-    if (idSeminar === 0) {
+    if (seminar.idSeminar === 0) {
       console.log("create");
-      let dataPost = {
-        ...data,
-        classId: idClass,
-        courseId: idCourse,
-      };
-      axiosAuth
-        .post(ENDPOINT.CREATE_SEMINAR, { data: dataPost })
-        .then((res) => {
-          console.log({ res });
-        });
+      // let dataPost = {
+      //   ...data,
+      //   classId: seminar.idClass,
+      //   courseId: seminar.idCourse,
+      // };
+      const formData = new FormData();
+      formData.append("data", seminarData);
+      axiosAuth.post(ENDPOINT.CREATE_SEMINAR, formData).then((res) => {
+        console.log({ res });
+      });
     } else {
       console.log("update");
     }
@@ -128,12 +153,11 @@ export default function InfoSeminar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
   useEffect(() => {
-
     try {
       if (seminar.idSeminar === 0) {
-        console.log('seminar 0');
-        
-        form.reset(defaultSeminar);
+        console.log("seminar 0");
+
+        form.reset(defaultValues);
       } else {
         session &&
           params.id &&
@@ -141,7 +165,9 @@ export default function InfoSeminar({
             .get(
               ENDPOINT.SEMINAR_DETAIL.replace(
                 ":id",
-                seminar.idSeminar &&  seminar.idSeminar !== 0 ?  seminar.idSeminar : params.id
+                seminar.idSeminar && seminar.idSeminar !== 0
+                  ? seminar.idSeminar
+                  : params.id
               )
             )
             .then((res: any) => {
@@ -384,6 +410,70 @@ export default function InfoSeminar({
                 />
               </div>
             </div>
+          </div>
+          <div>
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hình ảnh</FormLabel>
+                  <FormLabel className="text-[1.4rem]">
+                    <span className="text-[18px] font-semibold text-[#344054]">
+                      Thumbnail
+                    </span>
+                    <br />{" "}
+                    <div
+                      className="flex justify-center items-center gap-2 bg-white text-[#B4D1DF] text-[14px] px-[1rem] cursor-pointer py-[10px] rounded-[0.8rem] border-[1px] border-[#D0D5DD]"
+                      style={{ width: "max-content" }}
+                    >
+                      <Image src={Upload} alt="Upload" /> Browse
+                    </div>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      ref={inputRef}
+                      style={{ display: "none" }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setFile(file);
+                          field.onChange("http://localhost:3000/" + file.name);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {(file || image) && (
+              <div>
+                <Image
+                  src={file ? URL.createObjectURL(file) : image}
+                  width={128}
+                  height={128}
+                  alt="preview"
+                  className="w-32 h-32 object-cover"
+                />
+                <Button
+                  type="button"
+                  variant={"destructive"}
+                  size={"sm"}
+                  onClick={() => {
+                    setFile(null);
+                    form.setValue("images", "");
+                    if (inputRef.current) {
+                      inputRef.current.value = "";
+                    }
+                  }}
+                >
+                  Xóa hình ảnh
+                </Button>
+              </div>
+            )}
           </div>
           <div className="flex justify-end items-center gap-[12px]">
             <Button
