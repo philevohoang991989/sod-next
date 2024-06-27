@@ -64,7 +64,12 @@ const seminarFormSchema = z.object({
   divisionId: z.string(),
   remark: z.string(),
   thumbnailId: z.number().optional(),
-  images: z.string().url(),
+  images: z
+    .string()
+    .url()
+    .refine((files) => files && files.length > 0, {
+      message: "At least one image is required",
+    }),
 });
 
 type SeminarCourseFormValues = z.infer<typeof seminarFormSchema>;
@@ -103,18 +108,22 @@ export default function InfoSeminar() {
     console.log({ value });
 
     return {
-      ...data,
+      id: 0,
+      courseId: seminar.idCourse,
+      classId: seminar.idClass,
       seminarName: data.seminarName ?? "",
       isActive: data.isActive ?? false,
       isPublishNow: data.isPublishNow ?? false,
       isRightToICU: data.isRightToICU ?? false,
       isBelongHRMS: data.isBelongHRMS ?? false,
+      divisionId: parseInt(data.divisionId),
       publishStart: data.publishStart
         ? moment(data.publishStart).toISOString()
         : null,
       publishEnd: data.publishEnd
         ? moment(data.publishEnd).toISOString()
         : null,
+      thumbnailId: null,
     };
   };
 
@@ -131,7 +140,8 @@ export default function InfoSeminar() {
       //   courseId: seminar.idCourse,
       // };
       const formData = new FormData();
-      formData.append("data", seminarData);
+      formData.append("data", JSON.stringify(seminarData));
+      formData.append("thumbnail", file as File);
       axiosAuth.post(ENDPOINT.CREATE_SEMINAR, formData).then((res) => {
         console.log({ res });
       });
@@ -185,7 +195,7 @@ export default function InfoSeminar() {
                 publishEnd: res.data.publishEnd
                   ? new Date(res.data.publishEnd)
                   : undefined,
-                divisionId: res.data.divisionId.toString(),
+                divisionId: '2',
                 remark: res.data.remark,
                 thumbnailId: res.data.thumbnailId,
               };
@@ -417,7 +427,6 @@ export default function InfoSeminar() {
               name="images"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Hình ảnh</FormLabel>
                   <FormLabel className="text-[1.4rem]">
                     <span className="text-[18px] font-semibold text-[#344054]">
                       Thumbnail
@@ -450,28 +459,14 @@ export default function InfoSeminar() {
               )}
             />
             {(file || image) && (
-              <div>
+              <div className="mt-[1rem]">
                 <Image
                   src={file ? URL.createObjectURL(file) : image}
                   width={128}
                   height={128}
                   alt="preview"
-                  className="w-32 h-32 object-cover"
+                  className="w-[50%] object-cover rounded-[0.5rem]"
                 />
-                <Button
-                  type="button"
-                  variant={"destructive"}
-                  size={"sm"}
-                  onClick={() => {
-                    setFile(null);
-                    form.setValue("images", "");
-                    if (inputRef.current) {
-                      inputRef.current.value = "";
-                    }
-                  }}
-                >
-                  Xóa hình ảnh
-                </Button>
               </div>
             )}
           </div>

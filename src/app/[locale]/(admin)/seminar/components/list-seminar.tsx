@@ -55,7 +55,7 @@ export default function ListSeminar() {
       axiosAuth
         .get(ENDPOINT.LIST_SIBLING.replace(":id", params.id))
         .then((res: any) => {
-          setItems(res.data.sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0)));
+          setItems(res.data.sort((a: any, b: any) => (a?.order ?? 0) - (b?.order ?? 0)));
           dispatch(updateIdCourse(res.data[0].courseId));
           dispatch(updateIdClass(res.data[0].classId));
           dispatch(updateIdSeminar(params.id));
