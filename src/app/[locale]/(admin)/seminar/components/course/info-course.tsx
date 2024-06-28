@@ -251,7 +251,7 @@ export default function InfoCourse() {
               )}
             />
           </div>
-          <div className="grid grid-cols-5 grid-flow-row gap-4">
+          <div className="grid grid-cols-2 xl:grid-cols-5 grid-flow-row gap-4">
             <FormField
               control={form.control}
               name="curriculum"
@@ -308,7 +308,7 @@ export default function InfoCourse() {
               )}
             />
           </div>
-          <div className="grid grid-cols-5 grid-flow-row gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-5 grid-flow-row gap-4">
             <FormField
               control={form.control}
               name="heldDate"

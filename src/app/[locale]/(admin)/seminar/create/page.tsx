@@ -13,7 +13,7 @@ export default function CreateSeminar() {
         {" "}
         <InfoCourse
         />
-        <div className="flex justify-start rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
+        <div className="flex justify-start flex-col lg:flex-row rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
           <ListSeminar  />
           <InfoSeminar/>
         </div>

@@ -18,7 +18,7 @@ export default function Page({ params }: { params: { id: string } }) {
         {" "}
         <InfoCourse
         />
-        <div className="flex justify-start rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
+        <div className="flex flex-col lg:flex-row justify-start rounded-2xl bg-white border-[1px] border-[#D0D5DD]">
           <ListSeminar
           />
           <InfoSeminar />

@@ -252,7 +252,7 @@ export default function InfoSeminar() {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-3 grid-flow-row gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-3 grid-flow-row gap-4">
             <FormField
               control={form.control}
               name="divisionId"
@@ -365,7 +365,7 @@ export default function InfoSeminar() {
               )}
             />
           </div>
-          <div className="grid grid-cols-3 grid-flow-row gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-3 grid-flow-row gap-4">
             <div className="col-span-2">
               <FormField
                 control={form.control}
@@ -410,7 +410,7 @@ export default function InfoSeminar() {
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
-                        <span className="text-[1rem] text-[#101828] font-medium">
+                        <span className="text-[1rem] text-[#101828] font-medium" >
                           Right to ICU
                         </span>{" "}
                       </div>

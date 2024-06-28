@@ -8,7 +8,7 @@ interface AdminLayoutProps {
 }
 export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
-    <div className="flex flex-col h-full md:flex-row ">
+    <div className="flex flex-col h-full md:flex-row bg-[#f2f4f7]">
       <div className="w-[275px] hidden md:block">
         <SideNav items={NavItems} />
       </div>

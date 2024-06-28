@@ -71,7 +71,7 @@ export default function ListSeminar() {
   };
 
   return (
-    <div className="w-max-content border-r-[1px] border-r-[#D0D5DD]">
+    <div className="w-max-content border-r-none lg:border-r-[1px] border-r-[#D0D5DD]">
       <div className="px-[1.5rem] py-[1rem] border-b-[1px] border-[#D0D5DD] text-[18px] font-semibold text-[#101828]">
         List Seminar
       </div>
