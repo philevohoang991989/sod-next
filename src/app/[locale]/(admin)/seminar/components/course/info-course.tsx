@@ -85,6 +85,26 @@ export default function InfoCourse() {
   });
   const UpdateCourse = (data: TypeCourse) => {
     console.log("UpdateCourse", data);
+    const newClassCourse: CreateClass = {
+      name: data.referenceClass,
+      heldDate: data.heldDate,
+      courseDetail: {
+        id: 0,
+        name: data.name,
+        curriculum: data.curriculum,
+        category: data.category,
+        modelOfTraining: data.modelOfTraining,
+        subject: data.subject,
+        targetParticipant: data.targetParticipant,
+        isLocal: localCourse,
+      },
+    };
+    axiosAuth.put(ENDPOINT.CREATE_CLASS, newClassCourse).then((res) => {
+      form.reset(data);
+      dispatch(updateIdCourse(res.data.courseId));
+      dispatch(updateIdClass(res.data.id));
+      setActionCourse(false);
+    });
   };
   const CreateCourse = (data: TypeCourse) => {
     console.log("CreateCourse", data);
@@ -148,6 +168,7 @@ export default function InfoCourse() {
           targetParticipant: res.data.targetParticipant,
           heldDate: res.data.heldDate,
         };
+        !res.data.isLocal && setDisable(true);
         form.reset(defaultValues);
       });
   };

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import {
   Form,
@@ -7,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Observable, Subscriber } from "rxjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,14 +35,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import moment from "moment";
-import { cn } from "@/lib/utils";
+import { cn, convertToBase64 } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-import ReviewImage from "@/components/ReviewImage";
 
 type Props = {
   idSeminar?: any;
@@ -64,12 +65,7 @@ const seminarFormSchema = z.object({
   divisionId: z.string(),
   remark: z.string(),
   thumbnailId: z.number().optional(),
-  images: z
-    .string()
-    .url()
-    .refine((files) => files && files.length > 0, {
-      message: "At least one image is required",
-    }),
+  images: z.string().url().optional(),
 });
 
 type SeminarCourseFormValues = z.infer<typeof seminarFormSchema>;
@@ -77,12 +73,13 @@ type SeminarCourseFormValues = z.infer<typeof seminarFormSchema>;
 export default function InfoSeminar() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const seminar = useSelector((state: any) => state.seminar);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const { data: session } = useSession();
   const params: any = useParams();
   const axiosAuth = useAxiosAuth();
   const [listDivision, setListDivision] = useState([]);
+  const [datathumnail, setDatathumnail] = useState<string>("");
+  const [imageSeminar, setImageSeminar] = useState<any>();
 
   const defaultValues: Partial<SeminarCourseFormValues> = {
     id: 0,
@@ -97,18 +94,42 @@ export default function InfoSeminar() {
     divisionId: "",
     remark: "",
     thumbnailId: 0,
+    images: "",
   };
   const form = useForm<SeminarCourseFormValues>({
     resolver: zodResolver(seminarFormSchema),
     defaultValues,
   });
-  const image = form.watch("images");
+  // const image = form.watch("thumbnailId");
   const getSeminarData = (data: any) => {
     const value = form.getValues;
     console.log({ value });
 
     return {
       id: 0,
+      courseId: seminar.idCourse,
+      classId: seminar.idClass,
+      seminarName: data.seminarName ?? "",
+      isActive: data.isActive ?? false,
+      isPublishNow: data.isPublishNow ?? false,
+      isRightToICU: data.isRightToICU ?? false,
+      isBelongHRMS: data.isBelongHRMS ?? false,
+      divisionId: parseInt(data.divisionId),
+      publishStart: data.publishStart
+        ? moment(data.publishStart).toISOString()
+        : null,
+      publishEnd: data.publishEnd
+        ? moment(data.publishEnd).toISOString()
+        : null,
+      thumbnailId: null,
+    };
+  };
+  const updateSeminarData = (data: any) => {
+    const value = form.getValues;
+    console.log({ value });
+
+    return {
+      id: data.id,
       courseId: seminar.idCourse,
       classId: seminar.idClass,
       seminarName: data.seminarName ?? "",
@@ -133,19 +154,22 @@ export default function InfoSeminar() {
     console.log({ seminarData });
 
     if (seminar.idSeminar === 0) {
-      console.log("create");
-      // let dataPost = {
-      //   ...data,
-      //   classId: seminar.idClass,
-      //   courseId: seminar.idCourse,
-      // };
       const formData = new FormData();
       formData.append("data", JSON.stringify(seminarData));
-      formData.append("thumbnail", file as File);
+      formData.append("thumbnail", (file as File) || "");
       axiosAuth.post(ENDPOINT.CREATE_SEMINAR, formData).then((res) => {
         console.log({ res });
       });
     } else {
+      const seminarData = updateSeminarData(data);
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(seminarData));
+      formData.append("thumbnail", (file as File) || "");
+      axiosAuth
+        .put(`${ENDPOINT.CREATE_SEMINAR}/${params.id}`, formData)
+        .then((res) => {
+          console.log({ res });
+        });
       console.log("update");
     }
   };
@@ -195,10 +219,12 @@ export default function InfoSeminar() {
                 publishEnd: res.data.publishEnd
                   ? new Date(res.data.publishEnd)
                   : undefined,
-                divisionId: '2',
-                remark: res.data.remark,
+                divisionId: "2",
+                remark: res.data.remark !== null ? res.data.remark : "",
                 thumbnailId: res.data.thumbnailId,
               };
+              setDatathumnail(res.data.thumbnailId);
+
               form.reset(defaultValues);
             });
       }
@@ -208,6 +234,32 @@ export default function InfoSeminar() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, seminar.idSeminar]);
+  useEffect(() => {
+    const fetchThumbnail = async () => {
+      try {
+        const response = await axiosAuth.get(
+          ENDPOINT.GET_THUMBNAIL.replace(":id", datathumnail),
+          { responseType: "blob" }
+        );
+        const observable = convertToBase64(response.data);
+        const subscription = observable.subscribe({
+          next: (base64String) => {
+            console.log("Base64 String:", base64String);
+            setImageSeminar(base64String ?? undefined);
+          },
+          error: (err) => console.error(err),
+        });
+        return () => subscription.unsubscribe();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (datathumnail) {
+      fetchThumbnail();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datathumnail]);
 
   return (
     <div className="flex grow p-[1.5rem]">
@@ -410,7 +462,7 @@ export default function InfoSeminar() {
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
-                        <span className="text-[1rem] text-[#101828] font-medium" >
+                        <span className="text-[1rem] text-[#101828] font-medium">
                           Right to ICU
                         </span>{" "}
                       </div>
@@ -458,10 +510,12 @@ export default function InfoSeminar() {
                 </FormItem>
               )}
             />
-            {(file || image) && (
+            {(file || imageSeminar) && (
               <div className="mt-[1rem]">
                 <Image
-                  src={file ? URL.createObjectURL(file) : image}
+                  src={
+                    file ? URL.createObjectURL(file) : imageSeminar ?? undefined
+                  }
                   width={128}
                   height={128}
                   alt="preview"
