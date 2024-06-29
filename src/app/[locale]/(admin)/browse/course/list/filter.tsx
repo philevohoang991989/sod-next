@@ -29,6 +29,10 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PopoverClose } from "@radix-ui/react-popover";
+import useApiAuth from "@/lib/hook/useAxiosAuth";
+import { ENDPOINT } from "@/constants/endpoint";
+import { useEffect, useState } from "react";
 
 const searchFormSchema = z.object({
   search: z.string().optional(),
@@ -43,164 +47,200 @@ type SearchFormValues = z.infer<typeof searchFormSchema>;
 const defaultValues: Partial<SearchFormValues> = {
   search: "",
   status: "",
-  category: "",
   startDate: undefined,
   endDate: undefined,
 };
+
 export default function Filter() {
+  const [filter, setFilter] = useState<any>({});
+  const [listCourse, setListCourse] = useState<any>([]);
+  const [page, setPage] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(0);
+  const axiosAuth = useApiAuth();
   const formSearch = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues,
   });
+
   async function onSearch(data: z.infer<typeof searchFormSchema>) {
-    console.log({ data });
+    setFilter(data);
   }
+
+  const resetForm = () => {
+    formSearch.reset();
+  };
+  const getListCourse = () => {
+    axiosAuth
+      .get(ENDPOINT.GET_LIST_COURSE, {
+        params: filter,
+      })
+      .then((response) => {
+        setListCourse(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  useEffect(() => {
+    getListCourse()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, pageSize, filter]);
   return (
     <Form {...formSearch}>
       <form
         onSubmit={formSearch.handleSubmit(onSearch)}
-        className="flex justify-start items-end gap-4"
+        className="flex flex-col gap-4"
       >
-        <FormField
-          control={formSearch.control}
-          name="search"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  className="min-w-[25rem]"
-                  placeholder="Search Course ID, Name, Keywords, and more"
-                  {...field}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <Popover>
-          <PopoverTrigger className="border px-[10px] bg-white border-[#0D6999] rounded-[8px] flex items-center gap-2 h-[44px]">
-            <Image src={IcFilter} alt="IcFilter" />
-            <span className="font-semibold text-[14px] text-[#344054]">
-              Filter
-            </span>
-          </PopoverTrigger>
-          <PopoverContent
-            align="start"
-            className="border-none shadow-custom flex flex-col gap-4"
-          >
-            <FormField
-              control={formSearch.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="w-[20rem]">
-                        <SelectValue placeholder="Not specified" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="0">Active</SelectItem>
-                        <SelectItem value="1">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <div className="flex flex-col gap-2">
-              <FormLabel>Held Date</FormLabel>
-              <div className="flex items-end justify-between gap-1 relative">
-                <FormField
-                  control={formSearch.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "pl-3 text-left w-[155px] font-normal h-[44px]",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "dd/MM/yyyy")
-                              ) : (
-                                <span>Not specified</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={formSearch.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "pl-3 text-left w-[155px] font-normal h-[44px]",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "dd/MM/yyyy")
-                              ) : (
-                                <span>Not specified</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormItem>
-                  )}
-                />
+        <div className="flex justify-start items-end gap-4 flex-col md:flex-row">
+          <FormField
+            control={formSearch.control}
+            name="search"
+            render={({ field }) => (
+              <FormItem className="w-[100%] md:w-[25rem]">
+                <FormControl>
+                  <Input
+                    placeholder="Search Course ID, Name, Keywords, and more"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <Popover>
+            <PopoverTrigger className="w-[100%] md:w-[5rem] border px-[10px] bg-white border-[#0D6999] rounded-[8px] flex items-center gap-2 h-[44px]">
+              <div className="flex justify-center items-center gap-2 ">
+                {" "}
+                <Image src={IcFilter} alt="IcFilter" />
+                <span className="font-semibold text-[14px] text-[#344054]">
+                  Filter
+                </span>
               </div>
-            </div>
-            <div className="flex justify-between items-center gap-3">
-              <Button className="w-[100%] bg-[#F2F4F7] text-[#101828] shadow-none">Reset</Button>
-              <Button className="w-[100%]" type="submit">Apply</Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-
-        <Button
-          type="submit"
-          className="h-[44px] bg-[#DBE9F0] text-[#0D6999] shadow-none text-[14px]"
-        >
-          Search
-        </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="start"
+              className="border-none shadow-custom flex flex-col gap-4"
+            >
+              <FormField
+                control={formSearch.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-[20rem]">
+                          <SelectValue placeholder="Not specified" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Active</SelectItem>
+                          <SelectItem value="1">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="flex flex-col gap-2">
+                <FormLabel>Held Date</FormLabel>
+                <div className="flex items-end justify-between gap-1 relative">
+                  <FormField
+                    control={formSearch.control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "pl-3 text-left w-[155px] font-normal h-[44px]",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, "dd/MM/yyyy")
+                                ) : (
+                                  <span>Not specified</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={formSearch.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "pl-3 text-left w-[155px] font-normal h-[44px]",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, "dd/MM/yyyy")
+                                ) : (
+                                  <span>Not specified</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-3">
+                <Button
+                  type="button"
+                  onClick={resetForm}
+                  className="w-[100%] bg-[#F2F4F7] text-[#101828] shadow-none"
+                >
+                  Reset
+                </Button>
+                <PopoverClose asChild className="w-[100%]">
+                  <Button type="submit">Apply</Button>
+                </PopoverClose>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <Button
+            className="h-[44px] w-[100%] md:w-[5rem] bg-[#DBE9F0] text-[#0D6999] hover:bg-[#DBE9F0] shadow-none text-[14px]"
+            type="submit"
+          >
+            Search
+          </Button>
+        </div>
       </form>
     </Form>
   );

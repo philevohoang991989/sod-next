@@ -7,5 +7,6 @@ export enum ENDPOINT {
     SEMINAR_DETAIL='Seminar/:id',
     CREATE_CLASS = 'Class',
     CREATE_SEMINAR ='Seminar',
-    GET_THUMBNAIL='File/:id/thumbnail'
+    GET_THUMBNAIL='File/:id/thumbnail',
+    GET_LIST_COURSE='Course',
 }
