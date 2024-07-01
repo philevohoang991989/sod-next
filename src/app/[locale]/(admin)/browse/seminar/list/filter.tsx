@@ -40,7 +40,6 @@ const searchFormSchema = z.object({
   search: z.string().optional(),
   divisionId: z.string().optional(),
   status: z.string().optional(),
-  type: z.string().optional(),
   createdFrom: z.date().optional(),
   createdTo: z.date().optional(),
   updateDateFrom: z.date().optional(),
@@ -55,7 +54,6 @@ const defaultValues: Partial<SearchFormValues> = {
   search: "",
   divisionId: "",
   status: "",
-  type: "",
   createdFrom: undefined,
   createdTo: undefined,
   updateDateFrom: undefined,
@@ -138,7 +136,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                 name="divisionId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel>Division</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
@@ -149,7 +147,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                         </SelectTrigger>
                         <SelectContent>
                           {listDivision.map((item: any) => (
-                            <SelectItem key={item.id} value={item.id}>
+                            <SelectItem key={item.id} value={`${item.id}`}>
                               {item.name}
                             </SelectItem>
                           ))}
@@ -161,10 +159,10 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
               />
               <FormField
                 control={formSearch.control}
-                name="type"
+                name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>Status</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
