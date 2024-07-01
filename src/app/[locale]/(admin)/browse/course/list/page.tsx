@@ -29,8 +29,6 @@ export default function CourseList() {
     endDay: "",
   });
   useEffect(() => {
-    console.log("chay api");
-
     session &&
       axiosAuth
         .get(ENDPOINT.GET_LIST_COURSE, {

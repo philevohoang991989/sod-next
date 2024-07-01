@@ -78,7 +78,6 @@ const PaginationComponent = ({
   if (pageCount < 1) return null;
 
   const changePage = (page: number) => {
-    console.log({ comoppo: page });
 
     const params = new URLSearchParams(searchParams);
     params.set("page", page.toString());
