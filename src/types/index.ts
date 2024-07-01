@@ -22,6 +22,7 @@ export interface TypeCourse {
     referenceClass?: string;
     heldDate?: Date;
     classId?: number;
+    status?: number;
   }
   export interface CreateClass {
     id?: number

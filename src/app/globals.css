@@ -61,3 +61,17 @@ html{
     @apply bg-background text-foreground;
   }
 }
+table thead tr th{
+  border-bottom: none;
+}
+table thead tr th:first-child{
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+table thead tr th:last-child{
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+table tbody tr {
+  border-bottom: 1px solid #EAECF0;
+}

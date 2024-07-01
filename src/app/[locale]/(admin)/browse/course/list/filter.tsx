@@ -30,9 +30,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PopoverClose } from "@radix-ui/react-popover";
-import useApiAuth from "@/lib/hook/useAxiosAuth";
-import { ENDPOINT } from "@/constants/endpoint";
-import { useEffect, useState } from "react";
 
 const searchFormSchema = z.object({
   search: z.string().optional(),
@@ -50,46 +47,33 @@ const defaultValues: Partial<SearchFormValues> = {
   startDate: undefined,
   endDate: undefined,
 };
-
-export default function Filter() {
-  const [filter, setFilter] = useState<any>({});
-  const [listCourse, setListCourse] = useState<any>([]);
-  const [page, setPage] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(0);
-  const axiosAuth = useApiAuth();
+interface Props{
+  setFilter?: (data: any) => void;
+  setPageSize?: (data: any) => void;
+  setPage?: (data: any) => void;
+}
+export default function Filter({setFilter,setPageSize,setPage}:Props) {
   const formSearch = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues,
   });
 
   async function onSearch(data: z.infer<typeof searchFormSchema>) {
-    setFilter(data);
+    typeof setFilter === 'function' &&  setFilter({...data,page: 1, pageSize: 10});
+    typeof setPageSize === 'function' &&  setPageSize(10);
+    typeof setPage === 'function' &&  setPage(1);
+    
   }
 
   const resetForm = () => {
     formSearch.reset();
   };
-  const getListCourse = () => {
-    axiosAuth
-      .get(ENDPOINT.GET_LIST_COURSE, {
-        params: filter,
-      })
-      .then((response) => {
-        setListCourse(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-  useEffect(() => {
-    getListCourse()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, filter]);
+  
   return (
-    <Form {...formSearch}>
+    <Form {...formSearch} >
       <form
         onSubmit={formSearch.handleSubmit(onSearch)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-4 mb-4"
       >
         <div className="flex justify-start items-end gap-4 flex-col md:flex-row">
           <FormField
@@ -135,8 +119,8 @@ export default function Filter() {
                           <SelectValue placeholder="Not specified" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Active</SelectItem>
-                          <SelectItem value="1">Inactive</SelectItem>
+                          <SelectItem value="1">Active</SelectItem>
+                          <SelectItem value="0">Inactive</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
