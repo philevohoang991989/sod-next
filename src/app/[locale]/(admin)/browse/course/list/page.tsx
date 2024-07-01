@@ -1,7 +1,5 @@
 "use client";
 import PageLayout from "@/components/PageLayout";
-import Filter from "./filter";
-import { DataTable } from "./data-table";
 import { useEffect, useState } from "react";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { ENDPOINT } from "@/constants/endpoint";
@@ -11,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import PaginationComponent from "@/components/pagination-table";
+import Filter from "./filter";
+import { DataTable } from "./data-table";
 
 export default function CourseList() {
   const axiosAuth = useApiAuth();

@@ -31,7 +31,7 @@ export const NavItems: NavItem[] = [
         title: "Seminar",
         icon: BookOpenCheck,
         color: "text-red-500",
-        href: "/browse/seminar",
+        href: "/browse/seminar/list",
       },
       {
         title: "Video",

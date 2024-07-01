@@ -20,7 +20,7 @@ export default function IndexPage({ params: { locale } }: Props) {
         </CardHeader>
         <CardContent className="grid gap-6">
           <RadioGroup defaultValue="card" className="grid grid-cols-2 gap-4">
-            <a href="/seminar/create">
+            <a href="/browse/seminar/create">
               <RadioGroupItem value="card" id="card" className="peer sr-only" />
               <Label
                 htmlFor="card"
