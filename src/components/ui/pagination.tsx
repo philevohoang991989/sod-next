@@ -57,7 +57,7 @@ const PaginationLink = ({
         size,
       }),
       'rounded-none',
-      isActive ? "border-none bg-primary text-white":"rounded-none",
+      isActive ? "border-none bg-primary text-white":"rounded-none bg-white",
       className
     )}
     {...props}

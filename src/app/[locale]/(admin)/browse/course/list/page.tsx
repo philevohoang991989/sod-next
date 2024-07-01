@@ -38,9 +38,10 @@ export default function CourseList() {
         })
         .then((res) => {
           setListCourse(res.data.results);
-          setPageCount(res.data.rowCount);
+          setPageCount(res.data.totalFilter);
         });
-  }, [session, filter, page, pageSize]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, filter, page, pageSize, pageCount]);
 
   const columns: ColumnDef<Template>[] = [
     {
@@ -104,7 +105,7 @@ export default function CourseList() {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status");
+        const status: any = row.getValue("status");
         return status.value === 0 ? (
           <span className="bg-[#F9FAFB] py-1 px-5 rounded-[10px] text-[#344054]">
             Inactive
@@ -123,6 +124,7 @@ export default function CourseList() {
       page: page,
       pageSize: pageSize,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize]);
 
   return (

@@ -26,7 +26,7 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pageSize?:  number;
+  pageSize?:  number | undefined;
 }
 
 export function DataTable<TData, TValue>({
