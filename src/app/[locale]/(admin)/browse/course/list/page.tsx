@@ -49,7 +49,7 @@ export default function CourseList() {
         return (
           <Button
             variant="link"
-            className="p-0"
+            className="p-0 hover:no-underline"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Course ID
@@ -64,7 +64,7 @@ export default function CourseList() {
         return (
           <Button
             variant="link"
-            className="p-0"
+            className="p-0 hover:no-underline"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Course Name
@@ -83,7 +83,7 @@ export default function CourseList() {
         return (
           <Button
             variant="link"
-            className="p-0"
+            className="p-0 hover:no-underline"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Course Curriculum
