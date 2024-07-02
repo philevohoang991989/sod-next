@@ -336,7 +336,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                       <FormItem className="">
                         <FormControl>
                           <Input
-                          className="w-[155px]"
+                            className="w-[155px]"
                             placeholder="00:00:00"
                             {...field}
                           />
@@ -351,7 +351,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                       <FormItem className="">
                         <FormControl>
                           <Input
-                           className="w-[155px]"
+                            className="w-[155px]"
                             placeholder="00:00:00"
                             {...field}
                           />
