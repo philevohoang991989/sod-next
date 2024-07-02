@@ -35,6 +35,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { ENDPOINT } from "@/constants/endpoint";
+import TimeInput from "@/components/TimeMask";
 
 const searchFormSchema = z.object({
   search: z.string().optional(),
@@ -58,8 +59,8 @@ const defaultValues: Partial<SearchFormValues> = {
   createdTo: undefined,
   updateDateFrom: undefined,
   updateDateTo: undefined,
-  durationFrom: '',
-  durationTo: '',
+  durationFrom: "",
+  durationTo: "",
 };
 
 interface Props {
@@ -79,8 +80,8 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
   });
 
   async function onSearch(data: z.infer<typeof searchFormSchema>) {
-    console.log({data});
-    
+    console.log({ data });
+
     if (setFilter) setFilter({ ...data, page: 1, pageSize: 10 });
     if (setPageSize) setPageSize(10);
     if (setPage) setPage(1);
@@ -92,11 +93,9 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
 
   useEffect(() => {
     session &&
-      axiosAuth
-        .get(ENDPOINT.GET_ALL_DIVISION)
-        .then((res) => {
-          setListDivision(res.data);
-        });
+      axiosAuth.get(ENDPOINT.GET_ALL_DIVISION).then((res) => {
+        setListDivision(res.data);
+      });
   }, [session]);
 
   return (
@@ -195,7 +194,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                               <Button
                                 variant="outline"
                                 className={cn(
-                                 "pl-3 text-left w-[155px] font-normal h-[44px]",
+                                  "pl-3 text-left w-[155px] font-normal h-[44px]",
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
@@ -327,22 +326,20 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                   />
                 </div>
               </div>
-              {/* <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <FormLabel>Duration</FormLabel>
                 <div className="flex items-end justify-between gap-1 relative">
                   <FormField
                     control={formSearch.control}
                     name="durationFrom"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="">
                         <FormControl>
-                          <InputMask
-                            
-                            mask="00:00:00"
+                          <Input
+                          className="w-[155px]"
                             placeholder="00:00:00"
-                          >
-                            <Input type="text" {...field}/>
-                          </InputMask>
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -351,17 +348,19 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                     control={formSearch.control}
                     name="durationTo"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="">
                         <FormControl>
-                          <InputMask mask="99:99:99" >
-                            <Input type="text" {...field}/>
-                          </InputMask>
+                          <Input
+                           className="w-[155px]"
+                            placeholder="00:00:00"
+                            {...field}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
                   />
                 </div>
-              </div> */}
+              </div>
               <div className="flex justify-between items-center gap-3">
                 <Button
                   type="button"
