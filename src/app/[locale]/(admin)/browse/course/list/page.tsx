@@ -10,7 +10,7 @@ import { ArrowUpDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import PaginationComponent from "@/components/pagination-table";
 import Filter from "./filter";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/data-table";
 
 export default function CourseList() {
   const axiosAuth = useApiAuth();

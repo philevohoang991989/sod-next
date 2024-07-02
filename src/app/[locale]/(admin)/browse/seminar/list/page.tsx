@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { ENDPOINT } from "@/constants/endpoint";
-import { DataTable } from "./data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Template } from "./columns";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import Image from "next/image";
 import Edit from "@/assets/icons/edit.svg";
 import Delete from "@/assets/icons/trash.svg";
 import PaginationComponent from "@/components/pagination-table";
+import { DataTable } from "@/components/data-table";
 
 export default function ListSeminar() {
   const columns: ColumnDef<Template>[] = [
@@ -144,15 +144,15 @@ export default function ListSeminar() {
       },
       cell: ({ row }) => (
         <div className="w-full flex gap-4 justify-center items-center">
-          <Button className="text-[#0D85A8] p-0 font-semibold" variant="link">
-            <a href={`/browse/seminar/${row.getValue("id")}`}>
+          <Button className="p-0 w-8 h-8" variant="link">
+            <a href={`/browse/seminar/${row.getValue("id")}`} >
               {" "}
-              <Image src={Edit} alt="Edit" />
+              <Image width={20} height={20} src={Edit} alt="Edit" />
             </a>
           </Button>
 
           <Button
-            className="text-[#FF3B30] p-0 text-[1.6rem] font-semibold"
+            className="p-0 w-8 h-8"
             variant="link"
           >
             <Image src={Delete} alt="Delete" />

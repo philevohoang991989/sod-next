@@ -65,10 +65,9 @@ export function DataTable<TData, TValue>({
   
 
   return (
-    <div className="bg-white p-[20px] rounded-[0.5rem]">
-      
-
-      <Table className="table-tempalte">
+    <div className="bg-white p-[20px] rounded-[0.5rem] ">
+      <div className="overflow-x-auto">
+      <Table className="table-tempalte w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -116,6 +115,9 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+      </div>
+
+      
     </div>
   );
 }

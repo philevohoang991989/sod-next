@@ -37,7 +37,7 @@ export const NavItems: NavItem[] = [
         title: "Video",
         icon: BookOpenCheck,
         color: "text-red-500",
-        href: "/browse/video",
+        href: "/browse/video/list",
       },
     ],
   },
