@@ -213,7 +213,7 @@ export default function InfoCourse() {
           </p>
         )}
         {(!localCourse || seminar.idSeminar !== 0) &&
-          pathname === "/seminar/create" && (
+          pathname === "/browse/seminar/create" && (
             <Button
               variant="default"
               className="text-[14px]"
@@ -226,7 +226,7 @@ export default function InfoCourse() {
             </Button>
           )}
       </div>
-      {!localCourse && pathname === "/seminar/create" && (
+      {!localCourse && pathname === "/browse/seminar/create" && (
         <>
           <Label>Course</Label>{" "}
           <Select
