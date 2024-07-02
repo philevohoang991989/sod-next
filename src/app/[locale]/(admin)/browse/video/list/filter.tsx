@@ -39,28 +39,32 @@ import TimeInput from "@/components/TimeMask";
 
 const searchFormSchema = z.object({
   search: z.string().optional(),
-  divisionId: z.string().optional(),
+  LanguageVideoId: z.string().optional(),
   status: z.string().optional(),
-  createdFrom: z.date().optional(),
-  createdTo: z.date().optional(),
-  updateDateFrom: z.date().optional(),
-  updateDateTo: z.date().optional(),
   durationFrom: z.string().optional(),
   durationTo: z.string().optional(),
+  fileSizeFrom: z.string().optional(),
+  fileSizeTo: z.string().optional(),
+  uploadDateFrom: z.date().optional(),
+  uploadDateTo: z.date().optional(),
+  updateDateFrom: z.date().optional(),
+  updateDateTo: z.date().optional(),
 });
 
 type SearchFormValues = z.infer<typeof searchFormSchema>;
 
 const defaultValues: Partial<SearchFormValues> = {
   search: "",
-  divisionId: "",
   status: "",
-  createdFrom: undefined,
-  createdTo: undefined,
-  updateDateFrom: undefined,
-  updateDateTo: undefined,
   durationFrom: "",
   durationTo: "",
+  LanguageVideoId: "",
+  fileSizeFrom: "",
+  fileSizeTo: "",
+  uploadDateFrom:undefined,
+  uploadDateTo:undefined,
+  updateDateFrom:undefined,
+  updateDateTo:undefined,
 };
 
 interface Props {
@@ -72,7 +76,7 @@ interface Props {
 export default function Filter({ setFilter, setPageSize, setPage }: Props) {
   const axiosAuth = useApiAuth();
   const { data: session } = useSession();
-  const [listDivision, setListDivision] = useState([]);
+  const [listLanguageVideos, setListLanguageVideos] = useState([]);
 
   const formSearch = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
@@ -82,7 +86,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
   async function onSearch(data: z.infer<typeof searchFormSchema>) {
     console.log({ data });
 
-    if (setFilter) setFilter({ ...data, page: 1, pageSize: 10,status: parseInt(data.status) });
+    if (setFilter) setFilter({ ...data, page: 1, pageSize: 10 });
     if (setPageSize) setPageSize(10);
     if (setPage) setPage(1);
   }
@@ -93,8 +97,8 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
 
   useEffect(() => {
     session &&
-      axiosAuth.get(ENDPOINT.GET_ALL_DIVISION).then((res) => {
-        setListDivision(res.data);
+      axiosAuth.get(ENDPOINT.GET_LIST_LANGUAGE_VIDEO).then((res) => {
+        setListLanguageVideos(res.data);
       });
   }, [session]);
 
@@ -112,7 +116,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
               <FormItem className="w-full md:w-64">
                 <FormControl>
                   <Input
-                    placeholder="Search Seminar ID, Name, Keywords, and more"
+                    placeholder="Search Video ID, Title, Keywords, and more"
                     {...field}
                   />
                 </FormControl>
@@ -132,32 +136,6 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
             >
               <FormField
                 control={formSearch.control}
-                name="divisionId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Division</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-80">
-                          <SelectValue placeholder="Not specified" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {listDivision.map((item: any) => (
-                            <SelectItem key={item.id} value={`${item.id}`}>
-                              {item.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={formSearch.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -171,7 +149,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                           <SelectValue placeholder="Not specified" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Draft</SelectItem>
+                          <SelectItem value="0">New</SelectItem>
                           <SelectItem value="1">Published</SelectItem>
                           <SelectItem value="2">Unpublished</SelectItem>
                         </SelectContent>
@@ -180,12 +158,101 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={formSearch.control}
+                name="LanguageVideoId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Language</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-80">
+                          <SelectValue placeholder="Not specified" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {listLanguageVideos.map((item: any) => (
+                            <SelectItem key={item.id} value={`${item.id}`}>
+                              {item.language}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <div className="flex flex-col gap-2">
-                <FormLabel>Created Date</FormLabel>
+                <FormLabel>Duration</FormLabel>
                 <div className="flex items-end justify-between gap-1 relative">
                   <FormField
                     control={formSearch.control}
-                    name="createdFrom"
+                    name="durationFrom"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormControl>
+                          <Input
+                            className="w-[155px]"
+                            placeholder="00:00:00"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={formSearch.control}
+                    name="durationTo"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormControl>
+                          <Input
+                            className="w-[155px]"
+                            placeholder="00:00:00"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <FormLabel>File Size (MB)</FormLabel>
+                <div className="flex items-end justify-between gap-1 relative">
+                  <FormField
+                    control={formSearch.control}
+                    name="fileSizeFrom"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input className="w-[155px]" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={formSearch.control}
+                    name="fileSizeTo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input className="w-[155px]" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <FormLabel>Uploaded Date</FormLabel>
+                <div className="flex items-end justify-between gap-1 relative">
+                  <FormField
+                    control={formSearch.control}
+                    name="uploadDateFrom"
                     render={({ field }) => (
                       <FormItem>
                         <Popover>
@@ -219,7 +286,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                   />
                   <FormField
                     control={formSearch.control}
-                    name="createdTo"
+                    name="uploadDateTo"
                     render={({ field }) => (
                       <FormItem>
                         <Popover>
@@ -326,41 +393,7 @@ export default function Filter({ setFilter, setPageSize, setPage }: Props) {
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <FormLabel>Duration</FormLabel>
-                <div className="flex items-end justify-between gap-1 relative">
-                  <FormField
-                    control={formSearch.control}
-                    name="durationFrom"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormControl>
-                          <Input
-                            className="w-[155px]"
-                            placeholder="00:00:00"
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={formSearch.control}
-                    name="durationTo"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormControl>
-                          <Input
-                            className="w-[155px]"
-                            placeholder="00:00:00"
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
+
               <div className="flex justify-between items-center gap-3">
                 <Button
                   type="button"

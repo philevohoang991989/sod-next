@@ -9,5 +9,7 @@ export enum ENDPOINT {
     CREATE_SEMINAR ='Seminar',
     GET_THUMBNAIL='File/:id/thumbnail',
     GET_LIST_COURSE='Course',
-    GET_ALL_DIVISION ='Division/Export'
+    GET_ALL_DIVISION ='Division/Export',
+    GET_LIST_LANGUAGE_VIDEO='languageVideos',
+    GET_LIST_VIDEO='Video',
 }

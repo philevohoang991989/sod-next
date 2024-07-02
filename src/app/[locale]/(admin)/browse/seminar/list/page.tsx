@@ -145,7 +145,7 @@ export default function ListSeminar() {
       cell: ({ row }) => (
         <div className="w-full flex gap-4 justify-center items-center">
           <Button className="text-[#0D85A8] p-0 font-semibold" variant="link">
-            <a href={`/template/edit/${row.getValue("id")}`}>
+            <a href={`/browse/seminar/${row.getValue("id")}`}>
               {" "}
               <Image src={Edit} alt="Edit" />
             </a>
