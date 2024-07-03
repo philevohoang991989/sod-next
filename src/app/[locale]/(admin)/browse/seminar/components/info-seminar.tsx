@@ -237,26 +237,20 @@ export default function InfoSeminar() {
   useEffect(() => {
     const fetchThumbnail = async () => {
       try {
-        const response = await axiosAuth.get(
-          ENDPOINT.GET_THUMBNAIL.replace(":id", datathumnail),
-          { responseType: "blob" }
-        );
-        const observable = convertToBase64(response.data);
-        const subscription = observable.subscribe({
-          next: (base64String) => {
-            console.log("Base64 String:", base64String);
-            setImageSeminar(base64String ?? undefined);
-          },
-          error: (err) => console.error(err),
-        });
-        return () => subscription.unsubscribe();
+        await axiosAuth
+          .get(ENDPOINT.GET_THUMBNAIL.replace(":id", datathumnail))
+          .then((res) => {
+            setImageSeminar(res.data);
+          });
       } catch (error) {
         console.error(error);
       }
     };
 
-    if (datathumnail) {
+    if (datathumnail !== null) {
       fetchThumbnail();
+    }else{
+      setImageSeminar('')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datathumnail]);
