@@ -157,10 +157,10 @@ export default function ListVideo() {
       cell: ({ row }) => (
         <div className="w-full flex gap-4 justify-center items-center">
           <Button variant="link" className="p-0 w-8 h-8">
-            {/* <a href={`/browse/seminar/${row.getValue("id")}`}> */}
+            <a href={`/browse/video/${row.getValue("id")}`}>
               {" "}
               <Image height={20} width={20} src={Edit} alt="Edit" />
-            {/* </a> */}
+            </a>
           </Button>
           <Button
           className="p-0 w-8 h-8"
