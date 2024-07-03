@@ -39,7 +39,7 @@ export default function CourseList() {
           setPageCount(res.data.totalFilter);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, filter, page, pageSize, pageCount]);
+  }, [session, filter, pageCount]);
 
   const columns: ColumnDef<Template>[] = [
     {

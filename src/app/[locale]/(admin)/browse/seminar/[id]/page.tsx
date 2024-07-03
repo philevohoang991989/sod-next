@@ -1,15 +1,10 @@
 "use client";
 import PageLayout from "@/components/PageLayout";
-import { useState } from "react";
 import InfoCourse from "../components/course/info-course";
 import ListSeminar from "../components/list-seminar";
 import InfoSeminar from "../components/info-seminar";
 
 export default function Page({ params }: { params: { id: string } }) {
-  const [idClass, setIdClass] = useState(0);
-  const [idCourse, setIdCourse] = useState(0);
-  const [idSeminar, setIdSeminar] = useState(0);
-  const [defaultSeminar, setDefaultSeminar] = useState()
   
   return (
     <PageLayout title="Edit Seminar">
