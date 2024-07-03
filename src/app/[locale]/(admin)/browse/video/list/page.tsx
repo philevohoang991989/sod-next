@@ -196,7 +196,7 @@ export default function ListVideo() {
           setPageCount(res.data.totalFilter);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, filter, page, pageSize, pageCount]);
+  }, [session, filter, pageCount]);
   useEffect(() => {
     setFilter({
       ...filter,
