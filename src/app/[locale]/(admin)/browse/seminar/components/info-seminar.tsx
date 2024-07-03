@@ -62,7 +62,9 @@ const seminarFormSchema = z.object({
   courseId: z.number(),
   publishStart: z.date().optional(),
   publishEnd: z.date().optional(),
-  divisionId: z.string(),
+  divisionId: z.string().min(1, {
+    message: "This is required field!",
+  }),
   remark: z.string(),
   thumbnailId: z.number().optional(),
   images: z.string().url().optional(),
@@ -149,16 +151,13 @@ export default function InfoSeminar() {
   };
 
   const onSubmit = async (data: SeminarCourseFormValues) => {
-    console.log({ data });
     const seminarData = getSeminarData(data);
-    console.log({ seminarData });
 
     if (seminar.idSeminar === 0) {
       const formData = new FormData();
       formData.append("data", JSON.stringify(seminarData));
       formData.append("thumbnail", (file as File) || "");
       axiosAuth.post(ENDPOINT.CREATE_SEMINAR, formData).then((res) => {
-        console.log({ res });
       });
     } else {
       const seminarData = updateSeminarData(data);
@@ -168,9 +167,7 @@ export default function InfoSeminar() {
       axiosAuth
         .put(`${ENDPOINT.CREATE_SEMINAR}/${params.id}`, formData)
         .then((res) => {
-          console.log({ res });
         });
-      console.log("update");
     }
   };
 
@@ -189,7 +186,6 @@ export default function InfoSeminar() {
   useEffect(() => {
     try {
       if (seminar.idSeminar === 0) {
-        console.log("seminar 0");
 
         form.reset(defaultValues);
       } else {
@@ -219,7 +215,7 @@ export default function InfoSeminar() {
                 publishEnd: res.data.publishEnd
                   ? new Date(res.data.publishEnd)
                   : undefined,
-                divisionId: "2",
+                divisionId: `${res.data.divisionId}`,
                 remark: res.data.remark !== null ? res.data.remark : "",
                 thumbnailId: res.data.thumbnailId,
               };
@@ -307,7 +303,7 @@ export default function InfoSeminar() {
                   <FormLabel>Division</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Not specified" />
