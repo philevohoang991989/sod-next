@@ -15,6 +15,8 @@ import {
   updateIdCourse,
   updateIdSeminar,
 } from "@/redux/slices/seminarSlice";
+import { DeltePopup } from "./popup-delete";
+import { SemianarType } from "@/types";
 export default function ListSeminar() {
   const seminar = useSelector((state: any) => state.seminar);
   const dispatch = useDispatch();
@@ -26,9 +28,11 @@ export default function ListSeminar() {
   const params: any = useParams();
   const [disable, setDisable] = useState<boolean>(true);
   const handleDelete = (id: any) => {
-    setItems((prevUsers: any) =>
-      prevUsers.filter((item: any) => item.id !== id)
-    );
+    axiosAuth.delete(`${ENDPOINT.CREATE_SEMINAR}/${id}`).then((res) => {
+      setItems((prevUsers: any) =>
+        prevUsers.filter((item: any) => item.id !== id)
+      );
+    });
   };
   const defaultSeminar = {
     id: 0,
@@ -48,6 +52,16 @@ export default function ListSeminar() {
     // Implement logic to toggle reordering, e.g., showing a message or disabling/enabling the button
     setIsDragging(!isDragging);
   };
+  const applyReOrder = () => {
+    setIsDragging(true);
+    const listSeminarOrder = items.map((item: SemianarType, index: number) => ({
+      id: item.id,
+      order: index + 1,
+    }));
+    axiosAuth.post(`Course/${seminar.idCourse}/ReorderSeminars`, {
+      seminarOrders: listSeminarOrder,
+    });
+  };
 
   useEffect(() => {
     session &&
@@ -55,7 +69,9 @@ export default function ListSeminar() {
       axiosAuth
         .get(ENDPOINT.LIST_SIBLING.replace(":id", params.id))
         .then((res: any) => {
-          setItems(res.data.sort((a: any, b: any) => (a?.order ?? 0) - (b?.order ?? 0)));
+          setItems(
+            res.data.sort((a: any, b: any) => (a?.order ?? 0) - (b?.order ?? 0))
+          );
           dispatch(updateIdCourse(res.data[0].courseId));
           dispatch(updateIdClass(res.data[0].classId));
           dispatch(updateIdSeminar(params.id));
@@ -84,26 +100,38 @@ export default function ListSeminar() {
           >
             Add another Seminar
           </Button>
-          <Button
-            className="w-[100%]"
-            disabled={
-              (pathname === "/seminar/create" && disable) || items.length === 0
-            }
-            onClick={()=>handleReorderClick()}
-          >
-            Re-order List
-          </Button>
+          {!isDragging ? (
+            <Button
+              className="w-[120px]"
+              onClick={() => {
+                applyReOrder();
+              }}
+            >
+              Apply
+            </Button>
+          ) : (
+            <Button
+              className="w-[120px]"
+              disabled={
+                (pathname === "/seminar/create" && disable) ||
+                items.length === 0
+              }
+              onClick={() => handleReorderClick()}
+            >
+              Re-order List
+            </Button>
+          )}
         </div>
         <div className="flex flex-col gap-[12px] mt-[1rem]">
           <Reorder.Group
             values={items}
             onReorder={setItems}
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={() => setIsDragging(false)}
             draggable={isDragging}
           >
             <RadioGroup
-              defaultValue={seminar.idSeminar ? `${seminar.idSeminar}` : params.id}
+              defaultValue={
+                seminar.idSeminar ? `${seminar.idSeminar}` : params.id
+              }
               className="flex flex-col gap-3"
             >
               {items.map((item: any) => (
@@ -124,15 +152,14 @@ export default function ListSeminar() {
                       <div className="text-[14px] font-medium text-[#101828]">
                         {item.seminarName}
                       </div>
-                      <Button
-                        variant="link"
-                        className="p-0 h-[1rem]"
-                        onClick={() => {
+                      <DeltePopup
+                        idItem={item.id}
+                        title="Are you sure you want to permanently delete this Seminar?"
+                        message="Attached Videos will be saved in Video list"
+                        handleOk={() => {
                           handleDelete(item.id);
                         }}
-                      >
-                        <Trash size={16} color="#667085" />
-                      </Button>
+                      />
                     </Label>
                   </div>
                 </Reorder.Item>
