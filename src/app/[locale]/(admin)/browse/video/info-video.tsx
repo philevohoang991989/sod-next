@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn, timeStringToMilliseconds } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import TimeInput from "@/components/TimeInput";
+import { useSelector } from "react-redux";
 const videoSchema = z.object({
   id: z.number(),
   size: z.number(),
@@ -66,6 +67,9 @@ interface Props {
 
 export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
   const { data: session } = useSession();
+  console.log({ infoVideo });
+  const seminar = useSelector((state: any) => state.seminar);
+  const [listTimeSpan, setList] = useState([]);
   const axiosAuth = useApiAuth();
   const params = useParams();
   const [listLanguageVideos, setListLanguageVideos] = useState([]);
@@ -79,26 +83,56 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
   });
 
   useEffect(() => {
-    try {
-      formInfoVideo.reset({
-        ...defaultValues,
-        id: infoVideo ? infoVideo.id : 0,
-        size: +((infoVideo ? infoVideo.size : 0) / 1024 / 1024).toFixed(2),
-        duration: infoVideo
-          ? moment.utc(+infoVideo.duration, "HH:mm:ss").format("HH:mm:ss")
-          : 0,
-        videoName: infoVideo ? infoVideo.videoName : "",
-        languageVideoId: infoVideo ? `${infoVideo.languageVideoId}` : "",
-        speakers: infoVideo ? infoVideo.speakers : [],
-        asTrailer: infoVideo ? infoVideo.asTrailer : false,
-        timeSpanVideos: listTimeSpans
-        ? listTimeSpans.map((x: any) => ({
-            time: moment(x.time).format("HH:mm:ss"),
-            description: x.description // Assuming x has a description property
-          }))
-        : []
-      });
+    console.log({ idvIdeo: seminar.idVideo });
 
+    try {
+      infoVideo === undefined && seminar.idVideo !== 0
+        ? axiosAuth.get(`Video/${seminar.idVideo}`).then((res) => {
+            formInfoVideo.reset({
+              ...defaultValues,
+              id: res.data ? res.data.id : 0,
+              size: +((res.data ? res.data.size : 0) / 1024 / 1024).toFixed(2),
+              duration: res.data
+                ? moment.utc(+res.data.duration, "HH:mm:ss").format("HH:mm:ss")
+                : 0,
+              videoName: res.data ? res.data.videoName : "",
+              languageVideoId: res.data ? `${res.data.languageVideoId}` : "",
+              speakers: res.data ? res.data.speakers : [],
+              asTrailer: res.data ? res.data.asTrailer : false,
+              timeSpanVideos: listTimeSpans
+                ? listTimeSpans.map((x: any) => ({
+                    time: moment(x.time).format("HH:mm:ss"),
+                    description: x.description, // Assuming x has a description property
+                  }))
+                : listTimeSpan.map((x: any) => ({
+                  time: moment(x.time).format("HH:mm:ss"),
+                  description: x.description, // Assuming x has a description property
+                })),
+            });
+          })
+        : formInfoVideo.reset({
+            ...defaultValues,
+            id: infoVideo ? infoVideo.id : 0,
+            size: +((infoVideo ? infoVideo.size : 0) / 1024 / 1024).toFixed(2),
+            duration: infoVideo
+              ? moment.utc(+infoVideo.duration, "HH:mm:ss").format("HH:mm:ss")
+              : 0,
+            videoName: infoVideo ? infoVideo.videoName : "",
+            languageVideoId: infoVideo ? `${infoVideo.languageVideoId}` : "",
+            speakers: infoVideo ? infoVideo.speakers : [],
+            asTrailer: infoVideo ? infoVideo.asTrailer : false,
+            timeSpanVideos: listTimeSpans
+              ? listTimeSpans.map((x: any) => ({
+                  time: moment(x.time).format("HH:mm:ss"),
+                  description: x.description, // Assuming x has a description property
+                }))
+              : [],
+          });
+      listTimeSpans === undefined &&
+        session &&
+        axiosAuth.get(`video/${seminar.idVideo}/time-span`).then((res) => {
+          setList(res.data);
+        });
       session &&
         axiosAuth.get(ENDPOINT.GET_LIST_LANGUAGE_VIDEO).then((res) => {
           setListLanguageVideos(res.data);
@@ -107,8 +141,8 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
       console.error("Error fetching courses:", error);
       // Optionally handle specific error cases here
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, infoVideo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, infoVideo, seminar.idVideo]);
 
   async function onSubmit(data: z.infer<typeof videoSchema>) {
     console.log({ data });
@@ -126,9 +160,9 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
       console.log({ update: res });
     });
   }
-  
+
   return (
-    <div className="flex justify-between gap-4 flex-col md:flex-row">
+    <div className="flex w-[100%] justify-between gap-4 flex-col md:flex-row">
       <Form {...formInfoVideo}>
         <form
           onSubmit={formInfoVideo.handleSubmit(onSubmit)}
