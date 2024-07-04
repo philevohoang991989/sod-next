@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Form,
   FormControl,
@@ -31,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn, timeStringToMilliseconds } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import TimeInput from "@/components/TimeInput";
 const videoSchema = z.object({
   id: z.number(),
   size: z.number(),
@@ -61,36 +61,14 @@ const defaultValues: Partial<VideosValues> = {
 };
 interface Props {
   infoVideo?: any;
+  listTimeSpans?: any;
 }
 
-const TimeInput = ({ value, onChange }) => {
-  const [inputValue, setInputValue] = useState(value);
-
-  const handleInputChange = (e) => {
-    let val = e.target.value.replace(/[^0-9]/g, "");
-
-    if (val.length >= 2) val = val.slice(0, 2) + ":" + val.slice(2);
-    if (val.length >= 5) val = val.slice(0, 5) + ":" + val.slice(5, 7);
-    console.log({ val });
-
-    setInputValue(val);
-    onChange(val);
-  };
-
-  return (
-    <Input
-      value={inputValue}
-      onChange={handleInputChange}
-      placeholder="HH:mm:ss"
-    />
-  );
-};
-export default function InfoVideo({ infoVideo }: Props) {
+export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
   const { data: session } = useSession();
   const axiosAuth = useApiAuth();
   const params = useParams();
   const [listLanguageVideos, setListLanguageVideos] = useState([]);
-  const [listTimeSpans, setlistTimeSpans] = useState([]);
   const formInfoVideo = useForm<VideosValues>({
     resolver: zodResolver(videoSchema),
     defaultValues,
@@ -102,13 +80,6 @@ export default function InfoVideo({ infoVideo }: Props) {
 
   useEffect(() => {
     try {
-      session &&
-        infoVideo &&
-        infoVideo.id &&
-        axiosAuth.get(`video/${infoVideo.id}/time-span`).then((res) => {
-          console.log(res);
-          setlistTimeSpans(res.data);
-        });
       formInfoVideo.reset({
         ...defaultValues,
         id: infoVideo ? infoVideo.id : 0,
@@ -136,6 +107,7 @@ export default function InfoVideo({ infoVideo }: Props) {
       console.error("Error fetching courses:", error);
       // Optionally handle specific error cases here
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, infoVideo]);
 
   async function onSubmit(data: z.infer<typeof videoSchema>) {
@@ -154,7 +126,6 @@ export default function InfoVideo({ infoVideo }: Props) {
       console.log({ update: res });
     });
   }
-  console.log('watchtimeSpanVideos',formInfoVideo.watch('timeSpanVideos'));
   
   return (
     <div className="flex justify-between gap-4 flex-col md:flex-row">
@@ -163,7 +134,7 @@ export default function InfoVideo({ infoVideo }: Props) {
           onSubmit={formInfoVideo.handleSubmit(onSubmit)}
           className="flex flex-col gap-4 mb-4 w-[100%] h-[100%]"
         >
-          <div className="w-[100%] relative flex justify-center items-center gap-4">
+          <div className="w-[100%] relative flex justify-center flex-col lg:flex-row items-center gap-4">
             <div className="w-[100%] h-[100%] relative flex justify-center items-center">
               {infoVideo?.streamUrl && (
                 <iframe
@@ -222,7 +193,7 @@ export default function InfoVideo({ infoVideo }: Props) {
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Not specified" />

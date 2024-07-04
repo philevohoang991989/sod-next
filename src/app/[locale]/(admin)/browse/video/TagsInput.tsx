@@ -15,7 +15,6 @@ const TagsInput: React.FC<TagsInputProps> = ({
 }) => {
   const [tagInput, setTagInput] = useState<string>("");
   const [tags, setTags] = useState<any>();
-  console.log({ tags });
 
   const addTag = (tag: any) => {
     if (tag) {
@@ -56,12 +55,12 @@ const TagsInput: React.FC<TagsInputProps> = ({
               tags.map((tag: any, index: number) => (
                 <div
                   key={index}
-                  className="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+                  className="flex items-center bg-[#ebf5ff] text-[#175cd3] px-3 py-1 rounded-full"
                 >
                   {tag.fullName}
                   <button
                     type="button"
-                    className="ml-2 text-blue-500 hover:text-blue-700"
+                    className="ml-2 text-[#175cd3] hover:text-[#175cd3]"
                     onClick={() => field.onChange(removeTag(index))}
                   >
                     &times;
