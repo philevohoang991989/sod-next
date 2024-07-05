@@ -73,6 +73,7 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
   const axiosAuth = useApiAuth();
   const params = useParams();
   const [listLanguageVideos, setListLanguageVideos] = useState([]);
+  const [streamUrl, setStreamUrl] = useState<string>("");
   const formInfoVideo = useForm<VideosValues>({
     resolver: zodResolver(videoSchema),
     defaultValues,
@@ -86,48 +87,56 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
     console.log({ idvIdeo: seminar.idVideo });
 
     try {
-      infoVideo === undefined && seminar.idVideo !== 0
-        ? axiosAuth.get(`Video/${seminar.idVideo}`).then((res) => {
-            formInfoVideo.reset({
-              ...defaultValues,
-              id: res.data ? res.data.id : 0,
-              size: +((res.data ? res.data.size : 0) / 1024 / 1024).toFixed(2),
-              duration: res.data
-                ? moment.utc(+res.data.duration, "HH:mm:ss").format("HH:mm:ss")
-                : 0,
-              videoName: res.data ? res.data.videoName : "",
-              languageVideoId: res.data ? `${res.data.languageVideoId}` : "",
-              speakers: res.data ? res.data.speakers : [],
-              asTrailer: res.data ? res.data.asTrailer : false,
-              timeSpanVideos: listTimeSpans
-                ? listTimeSpans.map((x: any) => ({
-                    time: moment(x.time).format("HH:mm:ss"),
-                    description: x.description, // Assuming x has a description property
-                  }))
-                : listTimeSpan.map((x: any) => ({
-                  time: moment(x.time).format("HH:mm:ss"),
-                  description: x.description, // Assuming x has a description property
-                })),
-            });
-          })
-        : formInfoVideo.reset({
+      if (infoVideo === undefined && seminar.idVideo !== 0) {
+        axiosAuth.get(`Video/${seminar.idVideo}`).then((res) => {
+          setStreamUrl(res.data.streamUrl);
+          console.log({
+            duration: moment(res.data.duration).format("HH:mm:ss"),
+          });
+
+          formInfoVideo.reset({
             ...defaultValues,
-            id: infoVideo ? infoVideo.id : 0,
-            size: +((infoVideo ? infoVideo.size : 0) / 1024 / 1024).toFixed(2),
-            duration: infoVideo
-              ? moment.utc(+infoVideo.duration, "HH:mm:ss").format("HH:mm:ss")
+            id: res.data ? res.data.id : 0,
+            size: +((res.data ? res.data.size : 0) / 1024 / 1024).toFixed(2),
+            duration: res.data
+              ? moment(res.data.duration).format("HH:mm:ss")
               : 0,
-            videoName: infoVideo ? infoVideo.videoName : "",
-            languageVideoId: infoVideo ? `${infoVideo.languageVideoId}` : "",
-            speakers: infoVideo ? infoVideo.speakers : [],
-            asTrailer: infoVideo ? infoVideo.asTrailer : false,
+            videoName: res.data ? res.data.videoName : "",
+            languageVideoId: res.data ? `${res.data.languageVideoId}` : "",
+            speakers: res.data ? res.data.speakers : [],
+            asTrailer: res.data ? res.data.asTrailer : false,
             timeSpanVideos: listTimeSpans
               ? listTimeSpans.map((x: any) => ({
                   time: moment(x.time).format("HH:mm:ss"),
                   description: x.description, // Assuming x has a description property
                 }))
-              : [],
+              : listTimeSpan.map((x: any) => ({
+                  time: moment(x.time).format("HH:mm:ss"),
+                  description: x.description, // Assuming x has a description property
+                })),
           });
+        });
+      } else {
+        infoVideo && setStreamUrl(infoVideo?.streamUrl);
+        formInfoVideo.reset({
+          ...defaultValues,
+          id: infoVideo ? infoVideo.id : 0,
+          size: +((infoVideo ? infoVideo.size : 0) / 1024 / 1024).toFixed(2),
+          duration: infoVideo
+            ? moment(infoVideo.duration).format("HH:mm:ss")
+            : 0,
+          videoName: infoVideo ? infoVideo.videoName : "",
+          languageVideoId: infoVideo ? `${infoVideo.languageVideoId}` : "",
+          speakers: infoVideo ? infoVideo.speakers : [],
+          asTrailer: infoVideo ? infoVideo.asTrailer : false,
+          timeSpanVideos: listTimeSpans
+            ? listTimeSpans.map((x: any) => ({
+                time: moment(x.time).format("HH:mm:ss"),
+                description: x.description, // Assuming x has a description property
+              }))
+            : [],
+        });
+      }
       listTimeSpans === undefined &&
         session &&
         axiosAuth.get(`video/${seminar.idVideo}/time-span`).then((res) => {
@@ -170,12 +179,12 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
         >
           <div className="w-[100%] relative flex justify-center flex-col lg:flex-row items-center gap-4">
             <div className="w-[100%] h-[100%] relative flex justify-center items-center">
-              {infoVideo?.streamUrl && (
+              {streamUrl && (
                 <iframe
                   width="100%"
-                  height="auto"
+                  height="350px"
                   title="video"
-                  src={`https://sod-antmedia-137-184-249-221.nip.io/WebRTCAppEE/play.html?id=streams/${infoVideo?.streamUrl}.mp4&playOrder=vod`}
+                  src={`https://sod-antmedia-137-184-249-221.nip.io/WebRTCAppEE/play.html?id=streams/${streamUrl}.mp4&playOrder=vod`}
                 ></iframe>
               )}
             </div>

@@ -7,6 +7,7 @@ interface TimeInputProps {
   onChange: (val: any) => void;
 }
 const TimeInput: React.FC<TimeInputProps> = ({ value, onChange }) => {
+  
     const [inputValue, setInputValue] = useState(value);
 
   const handleInputChange = (e: any) => {
