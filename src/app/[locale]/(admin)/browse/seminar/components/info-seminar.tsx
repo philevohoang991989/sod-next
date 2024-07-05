@@ -540,7 +540,10 @@ export default function InfoSeminar() {
               </thead>
               <tbody className="rounded-[8px]">
                 {listVideo?.map((video: any, index: number) => (
-                  <tr key={video.id} className="h-[44px] rounded-[8px] border border-[#EAECF0]">
+                  <tr
+                    key={video.id}
+                    className="h-[44px] rounded-[8px] border border-[#EAECF0]"
+                  >
                     <td className="px-2 rounded-[8px]">{video.videoName}</td>
                     <td className="px-2">
                       <div className="flex justify-center items-center gap-2">
@@ -567,15 +570,21 @@ export default function InfoSeminar() {
             <Button
               type="button"
               variant="outline"
-              className="border-none text-[14px]"
+              className="border-none text-[14px] bg-[#f2f4f7] hover:bg-[#f2f4f7] text-[#101828] font-semibold shadow-none"
               onClick={() => {
                 form.reset(defaultValues);
               }}
             >
-              Cancel
+              Reset
+            </Button>{" "}
+            <Button className="border-none text-[14px] bg-[#fef3f2] hover:bg-[#fef3f2] text-[#f04438] font-semibold shadow-none">
+              Delete
             </Button>
-            <Button type="submit" className="text-[14px]">
-              Save
+            <Button className="text-[14px] bg-white hover:bg-white text-[#0d6999] font-semibold shadow-none border-[1px] border-[#d0d5dd]">
+              Add Video
+            </Button>
+            <Button type="submit" className="text-[14px] shadow-none">
+            Save Seminar
             </Button>
           </div>
         </form>
