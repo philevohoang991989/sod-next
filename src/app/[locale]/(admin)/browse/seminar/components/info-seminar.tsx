@@ -581,7 +581,7 @@ export default function InfoSeminar() {
               Delete
             </Button>
             <Button className="text-[14px] bg-white hover:bg-white text-[#0d6999] font-semibold shadow-none border-[1px] border-[#d0d5dd]">
-              Add Video
+              <a href={`/browse/seminar/${seminar.idSeminar}/videos`}>Add Video</a>
             </Button>
             <Button type="submit" className="text-[14px] shadow-none">
             Save Seminar

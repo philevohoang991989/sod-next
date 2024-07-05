@@ -99,7 +99,7 @@ export default function ListVideo({ listVideos }: Props) {
                       }}
                     >
                       <div className="text-[14px] font-medium text-[#101828]">
-                        {item.title}
+                        {item.videoName}
                       </div>
                       <DeltePopup
                         idItem={item.id}
