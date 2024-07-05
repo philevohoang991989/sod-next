@@ -40,7 +40,7 @@ const useApiAuth = () => {
           title: "Uh oh! Something went wrong.",
           description: "There was a problem with your request.",
         })
-        // signOut()
+        signOut()
         return ApiAuth(prevRequest);
       }
       return Promise.reject(error);

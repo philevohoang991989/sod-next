@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/popover";
 import moment from "moment";
 import { cn, convertToBase64 } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { ArrowUpDown, CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useParams } from "next/navigation";
@@ -82,6 +82,18 @@ export default function InfoSeminar() {
   const [listDivision, setListDivision] = useState([]);
   const [datathumnail, setDatathumnail] = useState<string>("");
   const [imageSeminar, setImageSeminar] = useState<any>();
+  const [listVideo, setListVideo] = useState<any>([]);
+
+  interface ItemVideo {
+    email?: string;
+    fullName?: string;
+    id?: number;
+    title?: string;
+  }
+  interface VideoType {
+    title?: string;
+    speakers: ItemVideo[];
+  }
 
   const defaultValues: Partial<SeminarCourseFormValues> = {
     id: 0,
@@ -105,7 +117,6 @@ export default function InfoSeminar() {
   // const image = form.watch("thumbnailId");
   const getSeminarData = (data: any) => {
     const value = form.getValues;
-    console.log({ value });
 
     return {
       id: 0,
@@ -128,7 +139,6 @@ export default function InfoSeminar() {
   };
   const updateSeminarData = (data: any) => {
     const value = form.getValues;
-    console.log({ value });
 
     return {
       id: data.id,
@@ -157,8 +167,7 @@ export default function InfoSeminar() {
       const formData = new FormData();
       formData.append("data", JSON.stringify(seminarData));
       formData.append("thumbnail", (file as File) || "");
-      axiosAuth.post(ENDPOINT.CREATE_SEMINAR, formData).then((res) => {
-      });
+      axiosAuth.post(ENDPOINT.CREATE_SEMINAR, formData).then((res) => {});
     } else {
       const seminarData = updateSeminarData(data);
       const formData = new FormData();
@@ -166,8 +175,7 @@ export default function InfoSeminar() {
       formData.append("thumbnail", (file as File) || "");
       axiosAuth
         .put(`${ENDPOINT.CREATE_SEMINAR}/${params.id}`, formData)
-        .then((res) => {
-        });
+        .then((res) => {});
     }
   };
 
@@ -184,50 +192,56 @@ export default function InfoSeminar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
   useEffect(() => {
-    try {
-      if (seminar.idSeminar === 0) {
-
-        form.reset(defaultValues);
-      } else {
-        session &&
-          params.id &&
-          axiosAuth
-            .get(
+    const fetchData = async () => {
+      try {
+        if (seminar.idSeminar === 0) {
+          form.reset(defaultValues);
+          setListVideo([]);
+        } else {
+          if (session && params.id) {
+            const seminarDetailResponse = await axiosAuth.get(
               ENDPOINT.SEMINAR_DETAIL.replace(
                 ":id",
                 seminar.idSeminar && seminar.idSeminar !== 0
                   ? seminar.idSeminar
                   : params.id
               )
-            )
-            .then((res: any) => {
-              const defaultValues = {
-                id: res.data.id,
-                seminarName: res.data.seminarName,
-                isPublishNow: res.data.isPublishNow,
-                isActive: res.data.isActive,
-                isRightToICU: res.data.isRightToICU,
-                isBelongHRMS: res.data.isBelongHRMS,
-                courseId: res.data.courseId,
-                publishStart: res.data.publishStart
-                  ? new Date(res.data.publishStart)
-                  : undefined,
-                publishEnd: res.data.publishEnd
-                  ? new Date(res.data.publishEnd)
-                  : undefined,
-                divisionId: `${res.data.divisionId}`,
-                remark: res.data.remark !== null ? res.data.remark : "",
-                thumbnailId: res.data.thumbnailId,
-              };
-              setDatathumnail(res.data.thumbnailId);
+            );
 
-              form.reset(defaultValues);
-            });
+            const res = seminarDetailResponse.data;
+            const defaultValues = {
+              id: res.id,
+              seminarName: res.seminarName,
+              isPublishNow: res.isPublishNow,
+              isActive: res.isActive,
+              isRightToICU: res.isRightToICU,
+              isBelongHRMS: res.isBelongHRMS,
+              courseId: res.courseId,
+              publishStart: res.publishStart
+                ? new Date(res.publishStart)
+                : undefined,
+              publishEnd: res.publishEnd ? new Date(res.publishEnd) : undefined,
+              divisionId: `${res.divisionId}`,
+              remark: res.remark !== null ? res.remark : "",
+              thumbnailId: res.thumbnailId,
+            };
+            setDatathumnail(res.thumbnailId);
+
+            form.reset(defaultValues);
+
+            const videosResponse = await axiosAuth.get(
+              `seminar/${seminar.idSeminar}/videos`
+            );
+            setListVideo(videosResponse.data);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        // Optionally handle specific error cases here
       }
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-      // Optionally handle specific error cases here
-    }
+    };
+
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, seminar.idSeminar]);
   useEffect(() => {
@@ -245,8 +259,8 @@ export default function InfoSeminar() {
 
     if (datathumnail !== null) {
       fetchThumbnail();
-    }else{
-      setImageSeminar('')
+    } else {
+      setImageSeminar("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datathumnail]);
@@ -301,10 +315,7 @@ export default function InfoSeminar() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Division</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Not specified" />
                     </SelectTrigger>
@@ -514,6 +525,44 @@ export default function InfoSeminar() {
               </div>
             )}
           </div>
+          <p className="text-[18px] font-semibold text-[#344054]">Video</p>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="h-[44px] bg-[#E7F0F5] rounded-b-none">
+                  <th className="text-muted-foreground font-medium text-left px-2 rounded-bl-none">
+                    Video Title
+                  </th>
+                  <th className="text-muted-foreground font-medium text-left px-2">
+                    Speaker(s)
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="rounded-[8px]">
+                {listVideo?.map((video: any, index: number) => (
+                  <tr key={video.id} className="h-[44px] rounded-[8px] border border-[#EAECF0]">
+                    <td className="px-2 rounded-[8px]">{video.videoName}</td>
+                    <td className="px-2">
+                      <div className="flex justify-center items-center gap-2">
+                        {video.speakers.map(
+                          (itemSpeaker: any, speakerIndex: number) => (
+                            <p
+                              key={speakerIndex}
+                              className="bg-[#ebf5ff] px-3 py-[4px] rounded-2xl text-[#175cd3] font-medium"
+                              style={{ width: "max-content" }}
+                            >
+                              {itemSpeaker.fullName}
+                            </p>
+                          )
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
           <div className="flex justify-end items-center gap-[12px]">
             <Button
               type="button"
