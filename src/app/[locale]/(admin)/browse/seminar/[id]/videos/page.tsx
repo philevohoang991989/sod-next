@@ -6,17 +6,23 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ListVideo from "../../list_video";
 import InfoVideo from "../../../video/info-video";
+import { useDispatch } from "react-redux";
+import { updateIdSeminar } from "@/redux/slices/seminarSlice";
 
 export default function VideosOfSeminar() {
+  const dispatch = useDispatch()
   const axiosAuth = useApiAuth();
   const { id } = useParams();
   const { data: session } = useSession();
+  const params = useParams();
   const [listVideos, setListVideos] = useState([]);
   useEffect(() => {
     session &&
       axiosAuth.get(`seminar/${id}/videos`).then((res) => {
         setListVideos(res.data);
       });
+      dispatch(updateIdSeminar(params.id))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
   return (
     <PageLayout title="All Video">

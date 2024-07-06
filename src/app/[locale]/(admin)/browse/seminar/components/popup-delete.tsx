@@ -3,7 +3,10 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogHeader,
   DialogTrigger,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Trash } from "lucide-react";
 import icDelete from "@/assets/icons/ic_delete.svg";
@@ -27,17 +30,23 @@ export function DeltePopup({ idItem, title, message, handleOk }: Props) {
         <div className="flex justify-start items-start gap-4">
           <Image width={40} height={40} src={icDelete} alt="icDelete" />
           <div className="flex flex-col gap-1">
-            <p className="font-semibold text-[1rem] text-[#101828]">{title}</p>
-            <p className="text-[14px] text-[#667085]">{message}</p>
+            <DialogHeader>
+              <DialogTitle className="font-semibold text-[1rem] text-[#101828]">
+                {title}
+              </DialogTitle>
+              <DialogDescription className="text-[14px] text-[#667085]">
+                {message}
+              </DialogDescription>
+            </DialogHeader>
           </div>
         </div>
         <div className="flex gap-3">
-          <Button className="w-full text-[1rem] bg-white text-[#344054] border-[1px] shadow-none border-[#D0D5DD] hover:bg-white">
+          <DialogClose className="w-full text-[1rem] h-[36px] bg-white text-[#344054] border-[1px] shadow-none border-[#D0D5DD] hover:bg-white">
             Cancel
-          </Button>
+          </DialogClose>
           <DialogClose
             onClick={handleOk}
-            className="w-full bg-[#F04438] hover:bg-[#F04438] rounded-md text-white"
+            className="w-full bg-[#F04438] h-[36px] hover:bg-[#F04438] rounded-md text-white"
           >
             Delete
           </DialogClose>

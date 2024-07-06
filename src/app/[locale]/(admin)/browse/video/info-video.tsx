@@ -11,7 +11,7 @@ import { ENDPOINT } from "@/constants/endpoint";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,7 +31,8 @@ import { Switch } from "@/components/ui/switch";
 import { cn, timeStringToMilliseconds } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import TimeInput from "@/components/TimeInput";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateIdVideo } from "@/redux/slices/seminarSlice";
 const videoSchema = z.object({
   id: z.number(),
   size: z.number(),
@@ -67,13 +68,15 @@ interface Props {
 
 export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
   const { data: session } = useSession();
-  console.log({ infoVideo });
+  const dispatch = useDispatch();
   const seminar = useSelector((state: any) => state.seminar);
+  const [speakers, setSpeakers] = useState();
   const [listTimeSpan, setList] = useState([]);
   const axiosAuth = useApiAuth();
-  const params = useParams();
+  const pathname = usePathname();
   const [listLanguageVideos, setListLanguageVideos] = useState([]);
   const [streamUrl, setStreamUrl] = useState<string>("");
+  const [listVideoNonSeinar, setListVideoNoneSeminar] = useState([]);
   const formInfoVideo = useForm<VideosValues>({
     resolver: zodResolver(videoSchema),
     defaultValues,
@@ -82,9 +85,11 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
     name: "timeSpanVideos",
     control: formInfoVideo.control,
   });
+  useEffect(() => {
+    seminar.idVideo === 0 && setStreamUrl("");
+  }, [seminar.idVideo]);
 
   useEffect(() => {
-    console.log({ idvIdeo: seminar.idVideo });
 
     try {
       if (infoVideo === undefined && seminar.idVideo !== 0) {
@@ -93,7 +98,7 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
           console.log({
             duration: moment(res.data.duration).format("HH:mm:ss"),
           });
-
+          setSpeakers(res.data.speakers);
           formInfoVideo.reset({
             ...defaultValues,
             id: res.data ? res.data.id : 0,
@@ -146,6 +151,11 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
         axiosAuth.get(ENDPOINT.GET_LIST_LANGUAGE_VIDEO).then((res) => {
           setListLanguageVideos(res.data);
         });
+      session &&
+        seminar.idVideo === 0 &&
+        axiosAuth.get(ENDPOINT.LIST_VIDEO_NONE_SEMINAR).then((res) => {
+          setListVideoNoneSeminar(res.data);
+        });
     } catch (error) {
       console.error("Error fetching courses:", error);
       // Optionally handle specific error cases here
@@ -154,20 +164,26 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
   }, [session, infoVideo, seminar.idVideo]);
 
   async function onSubmit(data: z.infer<typeof videoSchema>) {
-    console.log({ data });
     const timeSpans: any = data.timeSpanVideos && [...data?.timeSpanVideos];
     timeSpans.forEach((x: any) => (x.time = timeStringToMilliseconds(x.time)));
-    console.log({ timeSpans });
     const dataSave: any = {
       ...data,
       speakers: data.speakers,
       asTrailer: data.asTrailer ?? false,
       timeSpanVideos: timeSpans,
     };
-    console.log({ dataSave });
-    axiosAuth.put(`video/${data.id}`, dataSave).then((res) => {
-      console.log({ update: res });
-    });
+
+    if (pathname.includes("videos")) {
+      axiosAuth
+        .put(`Seminar/${seminar.idSeminar}/video`, dataSave)
+        .then((res) => {
+          console.log({ updatevideoseinar: res });
+        });
+    } else {
+      axiosAuth.put(`video/${data.id}`, dataSave).then((res) => {
+        console.log({ update: res });
+      });
+    }
   }
 
   return (
@@ -178,7 +194,7 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
           className="flex flex-col gap-4 mb-4 w-[100%] h-[100%]"
         >
           <div className="w-[100%] relative flex justify-center flex-col lg:flex-row items-center gap-4">
-            <div className="w-[100%] h-[100%] relative flex justify-center items-center">
+            <div className="w-[50%] h-[100%] relative flex  justify-center items-center">
               {streamUrl && (
                 <iframe
                   width="100%"
@@ -188,7 +204,28 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
                 ></iframe>
               )}
             </div>
-            <div className="flex flex-col w-[100%]">
+            <div className="flex flex-col  w-[50%]">
+              {pathname.includes("videos") && (
+                <>
+                  <FormLabel className="mb-2">Video</FormLabel>
+                  <Select
+                    onValueChange={(value) => dispatch(updateIdVideo(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Not specified" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {listVideoNonSeinar.map((item: any) => {
+                        return (
+                          <SelectItem key={item.id} value={`${item.id}`}>
+                            {item.videoName}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </>
+              )}
               <div className="flex justify-center gap-4">
                 <FormField
                   control={formInfoVideo.control}
@@ -259,7 +296,13 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
                 <FormLabel>Speaker(s)</FormLabel>
                 <TagsInput
                   control={formInfoVideo.control}
-                  listSpeakers={infoVideo?.speakers}
+                  listSpeakers={
+                    infoVideo
+                      ? infoVideo?.speakers
+                      : seminar.idVideo === 0
+                      ? []
+                      : speakers
+                  }
                   name="speakers"
                 />
               </div>

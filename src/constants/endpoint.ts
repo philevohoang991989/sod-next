@@ -13,5 +13,6 @@ export enum ENDPOINT {
     GET_LIST_LANGUAGE_VIDEO='languageVideos',
     GET_LIST_VIDEO='Video',
     ORDER_SEMINAR='Course/:id/ReorderSeminar',
-    GET_DETAIL_VIDEO = 'Video/:id'
+    GET_DETAIL_VIDEO = 'Video/:id',
+    LIST_VIDEO_NONE_SEMINAR = 'Video/Export'
 }
