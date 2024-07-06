@@ -194,7 +194,7 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
           className="flex flex-col gap-4 mb-4 w-[100%] h-[100%]"
         >
           <div className="w-[100%] relative flex justify-center flex-col lg:flex-row items-center gap-4">
-            <div className="w-[50%] h-[100%] relative flex  justify-center items-center">
+            <div className="w-[100%] lg:w-[50%] h-[100%] relative flex  justify-center items-center">
               {streamUrl && (
                 <iframe
                   width="100%"
@@ -204,7 +204,7 @@ export default function InfoVideo({ infoVideo, listTimeSpans }: Props) {
                 ></iframe>
               )}
             </div>
-            <div className="flex flex-col  w-[50%]">
+            <div className="flex flex-col w-[100%] lg:w-[50%]">
               {pathname.includes("videos") && (
                 <>
                   <FormLabel className="mb-2">Video</FormLabel>
