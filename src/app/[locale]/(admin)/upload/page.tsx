@@ -10,6 +10,7 @@ import UploadVideo from "@/assets/icons/upload_video.svg";
 import Trash from "@/assets/icons/trash.svg";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { ENDPOINT } from "@/constants/endpoint";
+import Status from "@/components/StatusUpload";
 
 interface ProgressInfo {
   percent: number;
@@ -68,17 +69,15 @@ const UploadPage: React.FC = () => {
   };
 
   const getStatusCode = (httpType: string) => {
+    console.log({httpType});
+    
     switch (httpType) {
       case "UPLOAD_PROGRESS":
         return "PROCESS";
       case "RESPONSE":
         return "NEW";
-      case "SENT":
-        return "PROCESS";
-      case "-1":
-        return "FAIL";
       default:
-        return "PENDING";
+        return "FAIL";
     }
   };
 
@@ -209,7 +208,8 @@ const UploadPage: React.FC = () => {
               </span>
               <div className="w-[20%] text-[#667085] text-[14px]">{(file.size/1024/1024).toFixed(2)}MB</div>
               <div className="w-[20%]">
-                <ProgressCircle progress={file.percent} color={color} />
+                {/* <ProgressCircle progress={file.percent} color={color} /> */}
+                <Status status={file.status} percent={file.percent} type="StatusUpload" />
               </div>
 
               <div className="w-[10%] flex justify-end">
