@@ -34,7 +34,7 @@ export default function DetailVideo() {
       btnBack={true}
       link="/browse/video/list"
     >
-      <div className="bg-white p-[20px] rounded-[0.5rem]">
+      <div className="bg-white p-[32px] rounded-[0.5rem]">
         <InfoVideo infoVideo={infoVideo} listTimeSpans={listTimeSpans} />
       </div>
     </PageLayout>

@@ -14,5 +14,6 @@ export enum ENDPOINT {
     GET_LIST_VIDEO='Video',
     ORDER_SEMINAR='Course/:id/ReorderSeminar',
     GET_DETAIL_VIDEO = 'Video/:id',
-    LIST_VIDEO_NONE_SEMINAR = 'Video/Export'
+    LIST_VIDEO_NONE_SEMINAR = 'Video/Export',
+    UPLOAD_VIDEO='File/Upload'
 }

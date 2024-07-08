@@ -223,7 +223,7 @@ export default function Login() {
                       />
                     </div>
                   </CardContent>
-                  <CardFooter className="pb-[48px] px-[32px] flex flex-col gap-[20px]">
+                  <CardFooter className="pb-[48px] px-[32px] flex flex-col gap-[32px]">
                     <Button className="w-full" type="submit">
                       Login
                     </Button>
