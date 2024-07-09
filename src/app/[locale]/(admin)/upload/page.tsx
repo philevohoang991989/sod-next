@@ -1,8 +1,6 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import ProgressCircle from "@/components/ProgressCircle";
 import { toast } from "@/components/ui/use-toast";
 import PageLayout from "@/components/PageLayout";
 import Image from "next/image";
@@ -22,13 +20,10 @@ interface ProgressInfo {
 }
 
 const UploadPage: React.FC = () => {
-  const [color, setColor] = useState("#0D6999");
-  const axiosAuth = useApiAuth()
+  const axiosAuth = useApiAuth();
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [progressInfos, setProgressInfos] = useState<ProgressInfo[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
   const acceptedExtensions = [".mp4"];
-  const router = useRouter();
   const eventAllFileUpload = useRef<Set<number>>(new Set());
 
   const selectFiles = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,20 +58,21 @@ const UploadPage: React.FC = () => {
 
     data.forEach((item, index) => {
       if (item.status === "PENDING") {
-        upload(index, item.file);
+        upload(progressInfos.length + index, item.file);
       }
     });
   };
 
   const getStatusCode = (httpType: string) => {
-    console.log({httpType});
-    
+
     switch (httpType) {
       case "UPLOAD_PROGRESS":
         return "PROCESS";
       case "RESPONSE":
         return "NEW";
-      default:
+      case "SENT":
+        return "PROCESS";
+      case "-1":
         return "FAIL";
     }
   };
@@ -92,7 +88,7 @@ const UploadPage: React.FC = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        onUploadProgress: (event) => {
+        onUploadProgress: (event: any) => {
           const percentCompleted = Math.round(
             (event.loaded * 100) / event.total
           );
@@ -159,6 +155,16 @@ const UploadPage: React.FC = () => {
     event.preventDefault();
   };
 
+  useEffect(() => {
+    // Kiểm tra nếu tất cả các video đều có trạng thái là "DONE"
+    const allDone = progressInfos.every(fileData => fileData.status === 'NEW');
+    if (allDone && progressInfos.length > 0) {
+      toast({
+        title: 'Upload successfully!',
+      });
+    }
+  }, [progressInfos]);
+
   return (
     <PageLayout title="Upload Video">
       <div className=" bg-white p-[32px] rounded-[0.5rem]">
@@ -206,15 +212,22 @@ const UploadPage: React.FC = () => {
               <span className="w-[50%] font-medium text-[#101828] text-[14px]">
                 {file.fileName}
               </span>
-              <div className="w-[20%] text-[#667085] text-[14px]">{(file.size/1024/1024).toFixed(2)}MB</div>
+              <div className="w-[20%] text-[#667085] text-[14px]">
+                {(file.size / 1024 / 1024).toFixed(2)}MB
+              </div>
               <div className="w-[20%]">
-                {/* <ProgressCircle progress={file.percent} color={color} /> */}
-                <Status status={file.status} percent={file.percent} type="StatusUpload" />
+                <Status
+                  status={file.status}
+                  percent={file.percent}
+                  type="StatusUpload"
+                />
               </div>
 
               <div className="w-[10%] flex justify-end">
                 {" "}
-                <button onClick={() => deleteFile(file)} className="p-0"><Image src={Trash} alt="Trash"/></button>
+                <button onClick={() => deleteFile(file)} className="p-0">
+                  <Image src={Trash} alt="Trash" />
+                </button>
               </div>
             </div>
           ))}
