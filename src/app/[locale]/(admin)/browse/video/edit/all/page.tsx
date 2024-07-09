@@ -12,6 +12,7 @@ export default function EditAllVideo() {
   const axiosAuth = useApiAuth();
   const seminar = useSelector((state: any) => state.seminar);
   const [listInfoVideo, setListInfoVideo] = useState([]);
+  const [listTimeSpans, setListTimeSpans] = useState([]);
   const [infoVideo, setInfoVideo] = useState();
   useEffect(() => {
     const fetchVideoInfo = async () => {
@@ -28,7 +29,7 @@ export default function EditAllVideo() {
     };
 
     fetchVideoInfo();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seminar.listVideoUpload]);
 
   return (
@@ -51,6 +52,9 @@ export default function EditAllVideo() {
                   className="flex items-center justify-between rounded-md border-[1px] border-[#D0D5DD] bg-white p-4 hover:bg-[#EFF8FF] hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-[#EFF8FF] [&:has([data-state=checked])]:border-primary"
                   onClick={() => {
                     setInfoVideo(item);
+                    axiosAuth.get(`video/${item.id}/time-span`).then((res) => {
+                      setListTimeSpans(res.data);
+                    });
                   }}
                 >
                   <div className="text-[14px] font-medium text-[#101828]">
@@ -70,7 +74,7 @@ export default function EditAllVideo() {
           </div>
         </RadioGroup>
         <div className="p-6 w-[100%] lg:w-[50%]">
-          <InfoVideo infoVideo={infoVideo} />
+          <InfoVideo infoVideo={infoVideo} listTimeSpans={listTimeSpans} />
         </div>
       </div>
     </PageLayout>
