@@ -5,7 +5,8 @@ const initialState = {
   idCourse: 0,
   idClass: 0,
   idSeminar: 0,
-  idVideo: 0
+  idVideo: 0,
+  listVideoUpload:[]
 };
 
 //Create the slice with Reducers
@@ -25,10 +26,13 @@ const seminarSlice = createSlice({
     updateIdVideo: (state, action) => {
       state.idVideo = action.payload;
     },
+    updateListVideoUpload: (state, action) => {
+      state.listVideoUpload = action.payload;
+    },
   },
 });
 
 //export the reducers(actions)
-export const { updateIdCourse, updateIdClass, updateIdSeminar ,updateIdVideo} =
+export const { updateIdCourse, updateIdClass, updateIdSeminar ,updateIdVideo,updateListVideoUpload} =
 seminarSlice.actions;
 export default seminarSlice.reducer;

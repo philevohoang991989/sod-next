@@ -9,6 +9,21 @@ import Trash from "@/assets/icons/trash.svg";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { ENDPOINT } from "@/constants/endpoint";
 import Status from "@/components/StatusUpload";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { useDispatch } from "react-redux";
+import { updateListVideoUpload } from "@/redux/slices/seminarSlice";
+import { useRouter } from "next/navigation";
 
 interface ProgressInfo {
   percent: number;
@@ -21,8 +36,10 @@ interface ProgressInfo {
 
 const UploadPage: React.FC = () => {
   const axiosAuth = useApiAuth();
-  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const dispatch = useDispatch()
+  const router = useRouter()
   const [progressInfos, setProgressInfos] = useState<ProgressInfo[]>([]);
+  const [showDialog, setShowDialog] = useState(false);
   const acceptedExtensions = [".mp4"];
   const eventAllFileUpload = useRef<Set<number>>(new Set());
 
@@ -64,7 +81,6 @@ const UploadPage: React.FC = () => {
   };
 
   const getStatusCode = (httpType: string) => {
-
     switch (httpType) {
       case "UPLOAD_PROGRESS":
         return "PROCESS";
@@ -109,11 +125,11 @@ const UploadPage: React.FC = () => {
           return newProgressInfos;
         });
 
-        if (eventAllFileUpload.current.size === (selectedFiles?.length ?? 0)) {
-          toast({
-            title: "Upload successfully! Do you want to edit the video?",
-          });
-        }
+        // if (eventAllFileUpload.current.size === (selectedFiles?.length ?? 0)) {
+        //   toast({
+        //     title: "Upload successfully! Do you want to edit the video?",
+        //   });
+        // }
       })
       .catch((error) => {
         setProgressInfos((prevProgressInfos) => {
@@ -140,7 +156,7 @@ const UploadPage: React.FC = () => {
       prevProgressInfos.filter((item) => item !== fileDelete)
     );
     if (fileDelete.id > 0) {
-      axios.delete(`/api/delete/${fileDelete.id}`);
+      axiosAuth.delete(`/Video/${fileDelete.id}`);
     }
   };
 
@@ -156,13 +172,16 @@ const UploadPage: React.FC = () => {
   };
 
   useEffect(() => {
-    // Kiểm tra nếu tất cả các video đều có trạng thái là "DONE"
-    const allDone = progressInfos.every(fileData => fileData.status === 'NEW');
+    const allDone = progressInfos.every(
+      (fileData) => fileData.status === "NEW"
+    );
     if (allDone && progressInfos.length > 0) {
-      toast({
-        title: 'Upload successfully!',
-      });
+      const ids = progressInfos.map((p) => p.id).filter((id) => !!id);
+      dispatch(updateListVideoUpload(ids))
+      setShowDialog(true);
+
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progressInfos]);
 
   return (
@@ -233,6 +252,23 @@ const UploadPage: React.FC = () => {
           ))}
         </div>
       </div>
+      {showDialog && (
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Upload successfully</DialogTitle>
+              <DialogDescription>
+                Do you want edit the video?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-between gap-4">
+              <DialogClose className="w-[100%] rounded-md border-[1px] border-input text-sm">Cancel</DialogClose>
+             
+              <Button className="w-[100%] bg-primary h-[2.5rem] rounded-md text-white" onClick={()=>router.push('/browse/video/edit/all')}>Confirm</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </PageLayout>
   );
 };
