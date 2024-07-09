@@ -15,5 +15,7 @@ export enum ENDPOINT {
     ORDER_SEMINAR='Course/:id/ReorderSeminar',
     GET_DETAIL_VIDEO = 'Video/:id',
     LIST_VIDEO_NONE_SEMINAR = 'Video/Export',
-    UPLOAD_VIDEO='File/Upload'
+    UPLOAD_VIDEO='File/Upload',
+    LIST_USER_PERMISSION='RoleGroupUser',
+    LIST_ALL_ROLE_GROUP ='RoleGroup/Export'
 }

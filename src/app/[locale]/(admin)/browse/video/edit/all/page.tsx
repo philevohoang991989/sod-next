@@ -66,7 +66,7 @@ export default function EditAllVideo() {
                     message=""
                     handleOk={() => {
                       // handleDelete(item);
-                    }}
+                    }} 
                   />
                 </Label>
               </div>

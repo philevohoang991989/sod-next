@@ -82,7 +82,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                     <ChevronDown className="h-6 w-6 shrink-0 text-[#B4D1DF] transition-transform duration-200" />
                   )}
                 </AccordionTrigger>
-                <AccordionContent className="mt-2 space-y-4 pb-1">
+                <AccordionContent className="mt-2 pb-1">
                   {item.children?.map((child) => (
                     <Link
                       key={child.title}

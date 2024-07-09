@@ -1,5 +1,5 @@
 import { NavItem } from "@/types";
-import { BookOpenCheck, Edit, File, FileUp, LayoutDashboard } from "lucide-react";
+import { BookOpenCheck, Edit, File, FileUp, LayoutDashboard, User } from "lucide-react";
 
 export const NavItems: NavItem[] = [
   {
@@ -38,6 +38,21 @@ export const NavItems: NavItem[] = [
         icon: BookOpenCheck,
         color: "text-red-500",
         href: "/browse/video/list",
+      },
+    ],
+  },
+  {
+    title: "Administration",
+    icon: User   ,
+    href: "/administration",
+    color: "text-[#B4D1DF]",
+    isChidren: true,
+    children: [
+      {
+        title: "Users Permission",
+        icon: BookOpenCheck,
+        color: "text-red-500",
+        href: "/administration/user-permission/list",
       },
     ],
   },
