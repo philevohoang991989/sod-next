@@ -18,5 +18,6 @@ export enum ENDPOINT {
     UPLOAD_VIDEO='File/Upload',
     LIST_USER_PERMISSION='RoleGroupUser',
     LIST_ALL_ROLE_GROUP ='RoleGroup/Export',
-    LIST_RESOLUTION ='Setting/ResolutionVersion'
+    LIST_RESOLUTION ='Setting/ResolutionVersion',
+    LIST_DIVISION = 'Division'
 }

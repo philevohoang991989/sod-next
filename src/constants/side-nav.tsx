@@ -60,6 +60,13 @@ export const NavItems: NavItem[] = [
         color: "text-red-500",
         href: "/administration/resolution/list",
       },
+      {
+        title: "Division Control",
+        icon: BookOpenCheck,
+        color: "text-red-500",
+        href: "/administration/division/list",
+        
+      }
     ],
   },
 ];
