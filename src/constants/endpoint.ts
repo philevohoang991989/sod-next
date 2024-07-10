@@ -17,5 +17,6 @@ export enum ENDPOINT {
     LIST_VIDEO_NONE_SEMINAR = 'Video/Export',
     UPLOAD_VIDEO='File/Upload',
     LIST_USER_PERMISSION='RoleGroupUser',
-    LIST_ALL_ROLE_GROUP ='RoleGroup/Export'
+    LIST_ALL_ROLE_GROUP ='RoleGroup/Export',
+    LIST_RESOLUTION ='Setting/ResolutionVersion'
 }

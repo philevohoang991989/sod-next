@@ -54,6 +54,12 @@ export const NavItems: NavItem[] = [
         color: "text-red-500",
         href: "/administration/user-permission/list",
       },
+      {
+        title: "Resolution Control",
+        icon: BookOpenCheck,
+        color: "text-red-500",
+        href: "/administration/resolution/list",
+      },
     ],
   },
 ];
