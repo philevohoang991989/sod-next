@@ -46,7 +46,18 @@ const defaultValues: Partial<ExportFormValues> = {
   startDate: undefined,
   endDate: undefined,
 };
-export default function FormExport() {
+interface Props {
+  page?: number;
+  pageSize?: number;
+  setPage?: (value: number) => void;
+  setPageSize?: (value: number) => void;
+}
+export default function FormExport({
+  page,
+  pageSize,
+  setPage,
+  setPageSize,
+}: Props) {
   const { data: session } = useSession();
   const axiosAuth = useApiAuth();
   const [listRoleGroup, setListRoleGroup] = useState<any>([]);
@@ -55,31 +66,34 @@ export default function FormExport() {
     defaultValues,
   });
   const onSubmit = async (data: ExportFormValues) => {
-    console.log({ data });
+    typeof setPage === "function" && setPage(1);
+    typeof setPageSize === "function" && setPageSize(10);
     const filterData = {
-        startDate: data.startDate
-          ? moment(data.startDate).toISOString()
-          : '',
-        endDate: data.endDate
-          ? moment(data.endDate).toISOString()
-          : '',
-        auditTypeId: data.groupId
-          ? data.groupId
-          : listRoleGroup[0].id,
-      };
-      console.log({filterData});
-      axiosAuth.get('Audit/Export', {
-        params: filterData,
-      }).then((res)=>{
-        const fileURL = window.URL.createObjectURL(
-            new Blob([res.data], { type: 'application/xlsx' })
+      page: page,
+      pageSize: pageSize,
+      startDate: data.startDate ? moment(data.startDate).toISOString() : "",
+      endDate: data.endDate ? moment(data.endDate).toISOString() : "",
+      auditTypeId: data.groupId ? data.groupId : listRoleGroup[0].id,
+    };
+    console.log({ filterData });
+    axiosAuth
+      .get("Audit/Export/",{
+          params: filterData,
+          responseType: "arraybuffer"
+        })
+      .then((res) => {
+        const fileURL: string = window.URL.createObjectURL(
+          new Blob([res.data], { type: "application/xlsx" })
         );
-        const alink = document.createElement('a');
-        alink.href = fileURL;
-        alink.download = `audit_log.xlsx`;
-        alink.click();
-      })
-      
+        try {
+          const alink = document.createElement("a");
+          alink.href = fileURL;
+          alink.download = `audit_log.xlsx`;
+          alink.click();
+        } catch (error) {
+          // console.error('Error while creating blob and initiating download', error);
+        }
+      });
   };
   useEffect(() => {
     session &&
@@ -195,7 +209,9 @@ export default function FormExport() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="h-[44px]">Export</Button>
+          <Button type="submit" className="h-[44px]">
+            Export
+          </Button>
         </form>
       </Form>
     </div>

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ENDPOINT } from "@/constants/endpoint";
-import { format } from "date-fns";
+import { endOfDay, format } from "date-fns";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
@@ -48,8 +48,9 @@ const defaultValues: Partial<ExportFormValues> = {
 };
 interface Props{
   setFilterData:(value: any)=>void;
+  filterData?:any
 }
-export default function FormSearch({setFilterData}: Props) {
+export default function FormSearch({setFilterData,filterData}: Props) {
   const { data: session } = useSession();
   const axiosAuth = useApiAuth();
   const [listRoleGroup, setListRoleGroup] = useState<any>([]);
@@ -59,7 +60,13 @@ export default function FormSearch({setFilterData}: Props) {
   });
   const onSubmit = async (data: ExportFormValues) => {
     console.log({ data });
-    setFilterData(data)
+    let datafilter = {
+      ...filterData,
+      auditTypeId: data.groupId,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    }
+    setFilterData(datafilter)
     
   };
   useEffect(() => {
