@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Division } from "./columns";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Plus, PlusCircle } from "lucide-react";
 import { DataTable } from "@/components/data-table";
 import { Switch } from "@/components/ui/switch";
 import Edit from "@/assets/icons/edit.svg";
@@ -196,7 +196,9 @@ export default function DivisionControl() {
   };
   return (
     <PageLayout title="Division Control">
-      <DataTable columns={columns} data={listDivision} pageSize={pageSize} />
+      <div className="bg-white rounded-lg"> <DataTable columns={columns} data={listDivision} pageSize={pageSize} />
+      <Button className="flex gap-1 items-center bg-[#F2F4F7] shadow-none text-[#344054]"><Plus size={20}/> Add Division</Button></div>
+     
       {showDialog && (
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
           <DialogContent className="sm:max-w-[425px]">
