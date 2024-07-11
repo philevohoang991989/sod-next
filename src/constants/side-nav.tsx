@@ -66,6 +66,13 @@ export const NavItems: NavItem[] = [
         color: "text-red-500",
         href: "/administration/division/list",
         
+      },
+      {
+        title: "Audit Log",
+        icon: BookOpenCheck,
+        color: "text-red-500",
+        href: "/administration/audit-log/list",
+        
       }
     ],
   },
