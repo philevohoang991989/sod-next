@@ -1,7 +1,7 @@
 "use client";
 import { DataTable } from "@/components/data-table";
 import PageLayout from "@/components/PageLayout";
-import { Resolution, UserPermission } from "./columns";
+import { Resolution } from "./columns";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";

@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import AddDivision from "./add-division";
 
 const editFormSchema = z.object({
   id: z.number(),
@@ -47,6 +48,7 @@ const defaultValues: Partial<EditFormValues> = {
 };
 export default function DivisionControl() {
   const [showDialog, setShowDialog] = useState(false);
+  const [showDialogAdd, setShowDialogAdd] = useState(false);
   const form = useForm<EditFormValues>({
     resolver: zodResolver(editFormSchema),
     defaultValues,
@@ -194,10 +196,11 @@ export default function DivisionControl() {
       });
     });
   };
+  {showDialogAdd}
   return (
     <PageLayout title="Division Control">
-      <div className="bg-white rounded-lg"> <DataTable columns={columns} data={listDivision} pageSize={pageSize} />
-      <Button className="flex gap-1 items-center bg-[#F2F4F7] shadow-none text-[#344054]"><Plus size={20}/> Add Division</Button></div>
+      <div className="bg-white rounded-lg pb-4"> <DataTable columns={columns} data={listDivision} pageSize={pageSize} />
+      <Button className="ml-8 flex gap-1 items-center bg-[#F2F4F7] shadow-none text-[#344054]" onClick={()=>setShowDialogAdd(true)}><Plus size={20}/> Add Division</Button></div>
      
       {showDialog && (
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -253,6 +256,7 @@ export default function DivisionControl() {
           </DialogContent>
         </Dialog>
       )}
+      {showDialogAdd && <AddDivision showDialogAdd={showDialogAdd} setShowDialogAdd={(value)=>setShowDialogAdd(value)}/>}
     </PageLayout>
   );
 }
