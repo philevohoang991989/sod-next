@@ -1,5 +1,5 @@
 import { NavItem } from "@/types";
-import { BookOpenCheck, Edit, File, FileUp, LayoutDashboard, User } from "lucide-react";
+import { Book, BookOpenCheck, Edit, File, FileUp, User } from "lucide-react";
 
 export const NavItems: NavItem[] = [
   {
@@ -75,5 +75,11 @@ export const NavItems: NavItem[] = [
         
       }
     ],
+  },
+  {
+    title: "Report",
+    icon: Book,
+    href: "/report",
+    color: "text-sky-500",
   },
 ];

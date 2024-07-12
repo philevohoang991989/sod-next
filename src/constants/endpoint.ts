@@ -19,5 +19,6 @@ export enum ENDPOINT {
     LIST_USER_PERMISSION='RoleGroupUser',
     LIST_ALL_ROLE_GROUP ='RoleGroup/Export',
     LIST_RESOLUTION ='Setting/ResolutionVersion',
-    LIST_DIVISION = 'Division'
+    LIST_DIVISION = 'Division',
+    LIST_SEMINAR_PUBLISH = 'Seminar/Published',
 }
