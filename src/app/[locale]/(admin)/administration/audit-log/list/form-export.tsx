@@ -51,16 +51,17 @@ interface Props {
   pageSize?: number;
   setPage?: (value: number) => void;
   setPageSize?: (value: number) => void;
+  listRoleGroup?: any
 }
 export default function FormExport({
   page,
   pageSize,
   setPage,
   setPageSize,
+  listRoleGroup
 }: Props) {
   const { data: session } = useSession();
   const axiosAuth = useApiAuth();
-  const [listRoleGroup, setListRoleGroup] = useState<any>([]);
   const form = useForm<ExportFormValues>({
     resolver: zodResolver(exportFormSchema),
     defaultValues,
@@ -95,12 +96,6 @@ export default function FormExport({
         }
       });
   };
-  useEffect(() => {
-    session &&
-      axiosAuth.get(ENDPOINT.LIST_ALL_ROLE_GROUP).then((res) => {
-        setListRoleGroup(res.data);
-      });
-  }, [session]);
   return (
     <div className="bg-white rounded-lg p-6">
       <Form {...form}>

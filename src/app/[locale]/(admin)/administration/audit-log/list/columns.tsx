@@ -2,8 +2,16 @@
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type AuditLog = {
+export type AuditLogType = {
   createDateTime: string;
-  name: string;
-  status: boolean;
+  user: UserType;
+  fileName?: string;
 };
+export type UserType={
+  id?: number;
+  email?: string;
+  govHrm?: string;
+  title?: string;
+  firstName?: string;
+  lastName?:string
+}

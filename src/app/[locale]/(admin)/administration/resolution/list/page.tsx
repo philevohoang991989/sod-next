@@ -135,15 +135,7 @@ export default function ResolutionControl() {
       acc[item.loginType]  = item.resolutionVersion;
       return acc;
   }, {} as { [key: string]: string });
-  console.log({objectFromArray});
-    // axiosAuth
-    //   .put(`RoleGroupUser/${data.userId}`, { roleGroupId: data.groupId })
-    //   .then((res) => {
-    //     setShowDialog(false);
-    //     toast({
-    //       title: "Update User permission Success",
-    //     });
-    //   });
+   
   };
   return (
     <PageLayout title="Resolution Control">

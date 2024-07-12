@@ -49,17 +49,14 @@ const defaultValues: Partial<ExportFormValues> = {
 interface Props{
   setFilterData:(value: any)=>void;
   filterData?:any
+  listRoleGroup?:any
 }
-export default function FormSearch({setFilterData,filterData}: Props) {
-  const { data: session } = useSession();
-  const axiosAuth = useApiAuth();
-  const [listRoleGroup, setListRoleGroup] = useState<any>([]);
+export default function FormSearch({setFilterData,filterData,listRoleGroup}: Props) {
   const form = useForm<ExportFormValues>({
     resolver: zodResolver(exportFormSchema),
     defaultValues,
   });
   const onSubmit = async (data: ExportFormValues) => {
-    console.log({ data });
     let datafilter = {
       ...filterData,
       auditTypeId: data.groupId,
@@ -69,12 +66,7 @@ export default function FormSearch({setFilterData,filterData}: Props) {
     setFilterData(datafilter)
     
   };
-  useEffect(() => {
-    session &&
-      axiosAuth.get(ENDPOINT.LIST_ALL_ROLE_GROUP).then((res) => {
-        setListRoleGroup(res.data);
-      });
-  }, [session]);
+  
   return (
     <div className="bg-white rounded-lg p-6">
       <Form {...form}>
