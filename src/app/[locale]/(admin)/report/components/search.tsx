@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { format } from "date-fns";
 import {
   Popover,
   PopoverContent,
@@ -33,14 +34,19 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CheckIcon } from "lucide-react";
+import { CalendarIcon, CheckIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 
 const searchFormSchema = z.object({
   seminarName: z.string().optional(),
+  heldDateFrom: z.date().optional(),
+  heldDateTo: z.date().optional(),
 });
 type SearchFormValues = z.infer<typeof searchFormSchema>;
 const defaultValues: Partial<SearchFormValues> = {
   seminarName: "",
+  heldDateFrom: undefined,
+  heldDateTo: undefined,
 };
 
 interface Props {
@@ -95,7 +101,7 @@ export default function SearchReport({ setFilter }: Props) {
                             variant="outline"
                             role="combobox"
                             className={cn(
-                              "w-[200px] justify-between",
+                              "w-[100%] h-[44px] justify-between",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -108,7 +114,7 @@ export default function SearchReport({ setFilter }: Props) {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-0">
+                      <PopoverContent className="w-[100%] p-0">
                         <Command>
                           <CommandInput placeholder="Search seminar..." />
                           <CommandEmpty>No seminar found.</CommandEmpty>
@@ -144,6 +150,81 @@ export default function SearchReport({ setFilter }: Props) {
                   </FormItem>
                 )}
               />
+              <div className="flex items-end gap-2">
+              <FormField
+            control={form.control}
+            name="heldDateFrom"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-1">
+                <FormLabel>Held Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "pl-3 text-left w-[200px] font-normal h-[44px]",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "dd/MM/yyyy")
+                        ) : (
+                          <span>Not specified</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="heldDateTo"
+            render={({ field }) => (
+              <FormItem>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "pl-3 text-left w-[200px] font-normal h-[44px]",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "dd/MM/yyyy")
+                        ) : (
+                          <span>Not specified</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </FormItem>
+            )}
+          />
+              </div>
               <Button type="submit">Search</Button>
             </form>
           </Form>
