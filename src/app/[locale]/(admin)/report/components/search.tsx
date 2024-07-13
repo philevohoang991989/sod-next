@@ -33,7 +33,14 @@ import IcFilter from "@/assets/icons/ic_filter.svg";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { CalendarIcon, CheckIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 
@@ -51,18 +58,31 @@ const defaultValues: Partial<SearchFormValues> = {
 
 interface Props {
   setFilter?: (data: any) => void;
+  filter?: any;
+  setListReport?: (data: any) => void;
+  setReportType?: (data: any) => void;
+  setPageCount?: (data: any) => void;
+  reportType: any
 }
-export default function SearchReport({ setFilter }: Props) {
+export default function SearchReport({
+  setFilter,
+  setListReport,
+  setReportType,
+  filter,
+  reportType,
+  setPageCount
+}: Props) {
   const { data: session } = useSession();
   const axiosAuth = useApiAuth();
   const [listSeminar, setListSeminar] = useState<any>([]);
+  const [listReportType, setListReportType] = useState<any>([]);
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     defaultValues,
   });
   const onSubmit = async (data: SearchFormValues) => {
-    console.log({data});
-    
+    console.log({ data });
+
     typeof setFilter === "function" && setFilter(data);
   };
   useEffect(() => {
@@ -70,10 +90,45 @@ export default function SearchReport({ setFilter }: Props) {
       axiosAuth.get(ENDPOINT.LIST_SEMINAR_PUBLISH).then((res) => {
         setListSeminar(res.data);
       });
+    session &&
+      axiosAuth.get(ENDPOINT.REPORT_TYPE).then((res) => {
+        console.log(res.data);
+        setListReportType(res.data);
+       typeof setReportType === 'function' && setReportType(res.data[0].id);
+      });
   }, [session]);
+  console.log({ reportType });
+  useEffect(() => {
+    session &&reportType &&
+      axiosAuth.get(`Report/${reportType}`, { params: filter }).then((res) => {
+        console.log(res.data);
+        typeof setListReport === 'function' && setListReport(res.data.results);
+        typeof setPageCount === 'function' && setPageCount(res.data.rowCount);
+      });
+  }, [session, reportType, filter]);
 
   return (
-    <div className="mb-[1.5rem]">
+    <div className="mb-[1.5rem] flex gap-2">
+      <Select
+        onValueChange={(value) => {
+          console.log({ value });
+          typeof setReportType ==='function' && setReportType(value);
+        }}
+        value={`${reportType}`}
+      >
+        <SelectTrigger className="w-70">
+          <SelectValue placeholder="Not specified" />
+        </SelectTrigger>
+        <SelectContent>
+          {listReportType.map((item: any) => {
+            return (
+              <SelectItem key={item.id} value={`${item.id}`}>
+                {item.name}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
       <Popover>
         <PopoverTrigger className="w-full md:w-20 border px-2.5 bg-white border-blue-700 rounded-lg flex items-center gap-2 h-11">
           <Image src={IcFilter} alt="Filter Icon" />
@@ -92,7 +147,7 @@ export default function SearchReport({ setFilter }: Props) {
                 control={form.control}
                 name="seminarName"
                 render={({ field }) => (
-                    <FormItem className="flex flex-col">
+                  <FormItem className="flex flex-col">
                     <FormLabel>Seminar title</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -107,8 +162,9 @@ export default function SearchReport({ setFilter }: Props) {
                           >
                             {field.value
                               ? listSeminar.find(
-                                (seminar: any) => `${seminar.id}` === field.value
-                              )?.seminarName
+                                  (seminar: any) =>
+                                    `${seminar.id}` === field.value
+                                )?.seminarName
                               : "Select seminar"}
                             <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -125,9 +181,12 @@ export default function SearchReport({ setFilter }: Props) {
                                   value={seminar.seminarName}
                                   key={seminar.id}
                                   onSelect={() => {
-                                    console.log({setValue: `${seminar.id}`});
-                                    
-                                    form.setValue("seminarName", `${seminar.id}`)
+                                    console.log({ setValue: `${seminar.id}` });
+
+                                    form.setValue(
+                                      "seminarName",
+                                      `${seminar.id}`
+                                    );
                                   }}
                                 >
                                   <CheckIcon
@@ -151,79 +210,79 @@ export default function SearchReport({ setFilter }: Props) {
                 )}
               />
               <div className="flex items-end gap-2">
-              <FormField
-            control={form.control}
-            name="heldDateFrom"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-1">
-                <FormLabel>Held Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "pl-3 text-left w-[200px] font-normal h-[44px]",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "dd/MM/yyyy")
-                        ) : (
-                          <span>Not specified</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="heldDateTo"
-            render={({ field }) => (
-              <FormItem>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "pl-3 text-left w-[200px] font-normal h-[44px]",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "dd/MM/yyyy")
-                        ) : (
-                          <span>Not specified</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
+                <FormField
+                  control={form.control}
+                  name="heldDateFrom"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-1">
+                      <FormLabel>Held Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "pl-3 text-left w-[200px] font-normal h-[44px]",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "dd/MM/yyyy")
+                              ) : (
+                                <span>Not specified</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="heldDateTo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "pl-3 text-left w-[200px] font-normal h-[44px]",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "dd/MM/yyyy")
+                              ) : (
+                                <span>Not specified</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormItem>
+                  )}
+                />
               </div>
               <Button type="submit">Search</Button>
             </form>

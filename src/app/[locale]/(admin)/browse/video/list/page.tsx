@@ -108,7 +108,7 @@ export default function ListVideo() {
       cell: ({ row }) => {
         const description: string = row.getValue("duration");
         return (
-          <p>{description ? moment(description).format("HH:mm:ss") : ""}</p>
+          <p>{description ? moment.utc(+(description ?? 0)).format('HH:mm:ss') : ""}</p>
         );
       },
     },

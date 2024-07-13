@@ -21,4 +21,5 @@ export enum ENDPOINT {
     LIST_RESOLUTION ='Setting/ResolutionVersion',
     LIST_DIVISION = 'Division',
     LIST_SEMINAR_PUBLISH = 'Seminar/Published',
+    REPORT_TYPE ='MasterData/report-type'
 }

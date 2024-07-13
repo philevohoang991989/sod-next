@@ -1,5 +1,8 @@
 export type reportColumn = {
     id: string;
-   
-    fileName?: string;
+   index?:number;
+   gradeName?: string;
+   staffName?:string;
+   postTitle?:string;
+   browsingRateSec?:any
   };
