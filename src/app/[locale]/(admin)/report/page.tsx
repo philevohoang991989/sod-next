@@ -1,14 +1,19 @@
 "use client";
 import { DataTable } from "@/components/data-table";
 import PageLayout from "@/components/PageLayout";
-import { columnsDurationByGrade } from "./components/columns";
+import {
+  columnsDurationByGrade,
+  columnsHitRateByGrade,
+  columnsVideoStatistic,
+  colunsHitRateByAccumulatedDuration,
+} from "./components/columns";
 import { useEffect, useState } from "react";
 import SearchReport from "./components/search";
 import moment from "moment";
 import PaginationComponent from "@/components/pagination-table";
 
 export default function ReportPage() {
-  const [reportType, setReportType] = useState(1);
+  const [reportType, setReportType] = useState<any>();
   const [columns, setColumns] = useState<any>([]);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -20,12 +25,24 @@ export default function ReportPage() {
     addedDateTo: moment().format("MM-DD-YYYY"),
   });
   useEffect(() => {
+    console.log({ page: typeof reportType });
+
     switch (reportType) {
-      case 1:
-        setColumns(columnsDurationByGrade);
+      // case 1:
+      //   setColumns(columnsDurationByGrade);
+      //   break;
+      case "2":
+        setColumns(columnsHitRateByGrade);
+        break;
+      case "3":
+        setColumns(colunsHitRateByAccumulatedDuration);
+        break;
+      case "4":
+        setColumns(columnsVideoStatistic);
         break;
       default:
-        setColumns([]);
+        setColumns(columnsDurationByGrade);
+        break;
     }
   }, [reportType]);
   useEffect(() => {

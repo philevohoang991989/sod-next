@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import {
@@ -97,7 +98,6 @@ export default function SearchReport({
        typeof setReportType === 'function' && setReportType(res.data[0].id);
       });
   }, [session]);
-  console.log({ reportType });
   useEffect(() => {
     session &&reportType &&
       axiosAuth.get(`Report/${reportType}`, { params: filter }).then((res) => {

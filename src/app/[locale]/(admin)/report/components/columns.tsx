@@ -1,6 +1,12 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { reportColumn } from "./interface";
+import {
+  itemAccumulatedViewDuration,
+  reportColumn,
+  reportHitRateByAccumulatedDuration,
+  reportHitRateByGrade,
+  reportVideoStatistic,
+} from "./interface";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react"; // Giả sử bạn dùng thư viện lucide-react cho icon
 import moment from "moment";
@@ -22,7 +28,7 @@ export const columnsDurationByGrade: ColumnDef<reportColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div className="flex justify-center">{row.index + 1}</div>; // Bắt đầu từ 1
+      return <div className="flex justify-center">{row.index + 1}</div>; 
     },
   },
   {
@@ -90,7 +96,7 @@ export const columnsDurationByGrade: ColumnDef<reportColumn>[] = [
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Post Title
+            Browsing Rate
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
@@ -100,13 +106,603 @@ export const columnsDurationByGrade: ColumnDef<reportColumn>[] = [
       const browsingRateSec: any = row.getValue("browsingRateSec");
       return (
         <p>
-          {browsingRateSec ? moment.utc(+(browsingRateSec ?? 0)).format('HH:mm:ss') : ""}
+          {browsingRateSec
+            ? moment.utc(+(browsingRateSec ?? 0)).format("HH:mm:ss")
+            : ""}
         </p>
       );
     },
   },
 ];
+export const columnsHitRateByGrade: ColumnDef<reportHitRateByGrade>[] = [
+  {
+    id: "index",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            No.
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="flex justify-center">{row.index + 1}</div>; 
+    },
+  },
+  {
+    accessorKey: "seminarId",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let seminarId: any = row.getValue("seminarId");
+      return (
+        <div className="flex justify-center">
+          <p>{seminarId}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "seminarName",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Seminar Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let seminarName: string = row.getValue("seminarName");
+      return (
+        <div className="flex justify-start">
+          <p>{seminarName}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "viewGroupByGrade",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Grade
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="flex justify-start">All</div>; 
+    },
+  },
+  {
+    accessorKey: "totalViewDuration",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total View Duration
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let totalViewDuration: string = row.getValue("totalViewDuration");
+      return (
+        <div className="flex justify-start">
+          {" "}
+          <p>
+            {totalViewDuration
+              ? moment.utc(+(totalViewDuration ?? 0)).format("HH:mm:ss")
+              : ""}
+          </p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "totalStaffCount",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total View Count
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let totalStaffCount: string = row.getValue("totalStaffCount");
+      return (
+        <div className="flex justify-center">
+          {" "}
+          <p>{totalStaffCount}</p>
+        </div>
+      ); 
+    },
+  },
+];
+export const colunsHitRateByAccumulatedDuration: ColumnDef<reportHitRateByAccumulatedDuration>[] =
+  [
+    {
+      id: "index",
+      header: ({ column }) => {
+        return (
+          <div className="flex justify-center">
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              No.
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        return <div className="flex justify-center">{row.index + 1}</div>; 
+      },
+    },
+    {
+      accessorKey: "seminarId",
+      header: ({ column }) => {
+        return (
+          <div className="flex justify-center">
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              ID
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        let seminarId: any = row.getValue("seminarId");
+        return (
+          <div className="flex justify-center">
+            <p>{seminarId}</p>
+          </div>
+        ); 
+      },
+    },
+    {
+      accessorKey: "seminarName",
+      header: ({ column }) => {
+        return (
+          <div className="flex justify-start">
+            <Button
+              className="p-0"
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Seminar Title
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        let seminarName: string = row.getValue("seminarName");
+        return (
+          <div className="flex justify-start">
+            <p>{seminarName}</p>
+          </div>
+        ); 
+      },
+    },
+    {
+      accessorKey: "accumulatedViewDuration",
+      header: ({ column }) => {
+        return (
+          <div className="flex justify-start">
+            <Button
+              className="p-0"
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Total View Duration
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        let accumulatedViewDuration: itemAccumulatedViewDuration[] =
+          row.getValue("accumulatedViewDuration");
 
+        let viewDuration = 0;
+
+        if (accumulatedViewDuration && accumulatedViewDuration.length > 0) {
+          viewDuration = accumulatedViewDuration
+            .map((x: any) => x.totalViewDuration ?? 0)
+            .reduce((acc: number, curr: number) => acc + curr, 0);
+        }
+
+        return (
+          <div className="flex justify-center">
+            {viewDuration > 0
+              ? moment.utc(viewDuration).format("HH:mm:ss")
+              : "00:00:00"}
+          </div>
+        );
+      },
+    },
+    {
+      id: "totalViewCount",
+      header: ({ column }) => {
+        return (
+          <div className="flex justify-center">
+            <Button
+              className="p-0"
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Total View Count
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        let accumulatedViewDuration: itemAccumulatedViewDuration[] =
+          row.getValue("accumulatedViewDuration");
+
+        let viewCount = 0;
+
+        if (accumulatedViewDuration && accumulatedViewDuration.length > 0) {
+          viewCount = accumulatedViewDuration
+            .map((x: any) => x.staffWatchedCount ?? 0)
+            .reduce((acc: number, curr: number) => acc + curr, 0);
+        }
+
+        return (
+          <div className="flex justify-center">
+            {viewCount > 0 ? viewCount : "0"}
+          </div>
+        );
+      },
+    },
+  ];
+export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
+  {
+    id: "index",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            No.
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="flex justify-center">{row.index + 1}</div>; 
+    },
+  },
+  {
+    accessorKey: "staffId",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Staff ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const staffId: number = row.getValue("staffId");
+      return (
+        <div className="flex justify-center">
+          <p>{staffId}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "rank",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Rank
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const rank: number = row.getValue("rank");
+      return (
+        <div className="flex justify-center">
+          <p>{rank}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "post",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Post Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const post: string = row.getValue("post");
+      return (
+        <div className="flex justify-center">
+          <p>{post ? post : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "staffName",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            variant="ghost"
+            className="p-0"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Staff Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const staffName: string = row.getValue("staffName");
+      return (
+        <div className="flex justify-start">
+          <p>{staffName ? staffName : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "classId",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Class ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const classId: number = row.getValue("classId");
+      return (
+        <div className="flex justify-center">
+          <p>{classId ? classId : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "classDuration",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Class Duration
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const classDuration: string = row.getValue("classDuration");
+      return (
+        <div className="flex justify-center">
+          <p>{classDuration ? classDuration : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "sodcId",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Seminar ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const sodcId: string = row.getValue("sodcId");
+      return (
+        <div className="flex justify-center">
+          <p>{sodcId ? sodcId : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "sodcDesc",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+          className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Seminar Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const sodcDesc: string = row.getValue("sodcDesc");
+      return (
+        <div className="flex justify-start">
+          <p>{sodcDesc ? sodcDesc : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "sodsId",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+          className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Video ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const sodsId: number = row.getValue("sodsId");
+      return (
+        <div className="flex justify-start">
+          <p>{sodsId ? sodsId : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "sodsDesc",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+          className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Video Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const sodsDesc: string = row.getValue("sodsDesc");
+      return (
+        <div className="flex justify-start">
+          <p>{sodsDesc ? sodsDesc : ""}</p>
+        </div>
+      ); 
+    },
+  },
+  {
+    accessorKey: "sodsLength",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+          className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Duration
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const sodsLength: string = row.getValue("sodsLength");
+      return (
+        <div className="flex justify-start">
+          <p>{sodsLength ? moment.utc(sodsLength).format("HH:mm:ss") : "00:00:00"}</p>
+        </div>
+      ); 
+    },
+  },
+];
 // const columns: ColumnDef<reportColumn>[] = [
 //   {
 //     accessorKey: "id",
