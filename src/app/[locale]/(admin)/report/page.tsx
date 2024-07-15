@@ -4,6 +4,7 @@ import PageLayout from "@/components/PageLayout";
 import {
   columnsDurationByGrade,
   columnsHitRateByGrade,
+  columnsSODUser,
   columnsVideoStatistic,
   colunsHitRateByAccumulatedDuration,
 } from "./components/columns";
@@ -40,6 +41,9 @@ export default function ReportPage() {
       case "4":
         setColumns(columnsVideoStatistic);
         break;
+        case "5":
+          setColumns(columnsSODUser);
+          break;
       default:
         setColumns(columnsDurationByGrade);
         break;

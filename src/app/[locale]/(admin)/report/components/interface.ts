@@ -25,17 +25,28 @@ export type reportHitRateByAccumulatedDuration = {
   seminarName?: string;
   accumulatedViewDuration?: itemAccumulatedViewDuration[];
 };
-export type reportVideoStatistic={
-    index?: number;
-    staffId?: number;
-    rank?:string;
-    post?: string;
-    staffName?:string;
-    classId?: number;
-    classDuration?: number;
-    sodcId?: number;
-    sodcDesc?: string;
-    sodsId?: number;
-    sodsDesc?: string;
-    sodsLength?: string
-}
+export type reportVideoStatistic = {
+  index?: number;
+  staffId?: number;
+  rank?: string;
+  post?: string;
+  staffName?: string;
+  classId?: number;
+  classDuration?: number;
+  sodcId?: number;
+  sodcDesc?: string;
+  sodsId?: number;
+  sodsDesc?: string;
+  sodsLength?: string;
+};
+export type reportColumnSODUser = {
+  index?: number;
+  seminarId?:number;
+  seminarName?: string;
+  status?: number;
+  divisions?: string;
+  heldDate?: string;
+  totalDuration?: number;
+  videoSize?: number;
+  TargetParticipant?: string;
+};

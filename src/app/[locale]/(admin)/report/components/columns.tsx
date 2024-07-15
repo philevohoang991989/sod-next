@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   itemAccumulatedViewDuration,
   reportColumn,
+  reportColumnSODUser,
   reportHitRateByAccumulatedDuration,
   reportHitRateByGrade,
   reportVideoStatistic,
@@ -28,7 +29,7 @@ export const columnsDurationByGrade: ColumnDef<reportColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div className="flex justify-center">{row.index + 1}</div>; 
+      return <div className="flex justify-center">{row.index + 1}</div>;
     },
   },
   {
@@ -83,7 +84,7 @@ export const columnsDurationByGrade: ColumnDef<reportColumn>[] = [
     },
     cell: ({ row }) => {
       const postTitle = row.getValue("postTitle");
-      return postTitle ? postTitle : ""; // Không hiển thị nội dung trong ô này
+      return postTitle ? postTitle : "";
     },
   },
   {
@@ -131,7 +132,7 @@ export const columnsHitRateByGrade: ColumnDef<reportHitRateByGrade>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div className="flex justify-center">{row.index + 1}</div>; 
+      return <div className="flex justify-center">{row.index + 1}</div>;
     },
   },
   {
@@ -155,7 +156,7 @@ export const columnsHitRateByGrade: ColumnDef<reportHitRateByGrade>[] = [
         <div className="flex justify-center">
           <p>{seminarId}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -180,7 +181,7 @@ export const columnsHitRateByGrade: ColumnDef<reportHitRateByGrade>[] = [
         <div className="flex justify-start">
           <p>{seminarName}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -200,7 +201,7 @@ export const columnsHitRateByGrade: ColumnDef<reportHitRateByGrade>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div className="flex justify-start">All</div>; 
+      return <div className="flex justify-start">All</div>;
     },
   },
   {
@@ -230,7 +231,7 @@ export const columnsHitRateByGrade: ColumnDef<reportHitRateByGrade>[] = [
               : ""}
           </p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -256,7 +257,7 @@ export const columnsHitRateByGrade: ColumnDef<reportHitRateByGrade>[] = [
           {" "}
           <p>{totalStaffCount}</p>
         </div>
-      ); 
+      );
     },
   },
 ];
@@ -280,7 +281,7 @@ export const colunsHitRateByAccumulatedDuration: ColumnDef<reportHitRateByAccumu
         );
       },
       cell: ({ row }) => {
-        return <div className="flex justify-center">{row.index + 1}</div>; 
+        return <div className="flex justify-center">{row.index + 1}</div>;
       },
     },
     {
@@ -306,7 +307,7 @@ export const colunsHitRateByAccumulatedDuration: ColumnDef<reportHitRateByAccumu
           <div className="flex justify-center">
             <p>{seminarId}</p>
           </div>
-        ); 
+        );
       },
     },
     {
@@ -333,7 +334,7 @@ export const colunsHitRateByAccumulatedDuration: ColumnDef<reportHitRateByAccumu
           <div className="flex justify-start">
             <p>{seminarName}</p>
           </div>
-        ); 
+        );
       },
     },
     {
@@ -430,7 +431,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div className="flex justify-center">{row.index + 1}</div>; 
+      return <div className="flex justify-center">{row.index + 1}</div>;
     },
   },
   {
@@ -454,7 +455,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-center">
           <p>{staffId}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -478,7 +479,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-center">
           <p>{rank}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -502,7 +503,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-center">
           <p>{post ? post : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -527,7 +528,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-start">
           <p>{staffName ? staffName : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -551,7 +552,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-center">
           <p>{classId ? classId : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -575,7 +576,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-center">
           <p>{classDuration ? classDuration : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -599,7 +600,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-center">
           <p>{sodcId ? sodcId : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -608,7 +609,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
       return (
         <div className="flex justify-start">
           <Button
-          className="p-0"
+            className="p-0"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -624,7 +625,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-start">
           <p>{sodcDesc ? sodcDesc : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -633,7 +634,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
       return (
         <div className="flex justify-start">
           <Button
-          className="p-0"
+            className="p-0"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -649,7 +650,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-start">
           <p>{sodsId ? sodsId : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -658,7 +659,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
       return (
         <div className="flex justify-start">
           <Button
-          className="p-0"
+            className="p-0"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -674,7 +675,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
         <div className="flex justify-start">
           <p>{sodsDesc ? sodsDesc : ""}</p>
         </div>
-      ); 
+      );
     },
   },
   {
@@ -683,7 +684,7 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
       return (
         <div className="flex justify-start">
           <Button
-          className="p-0"
+            className="p-0"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -697,32 +698,261 @@ export const columnsVideoStatistic: ColumnDef<reportVideoStatistic>[] = [
       const sodsLength: string = row.getValue("sodsLength");
       return (
         <div className="flex justify-start">
-          <p>{sodsLength ? moment.utc(sodsLength).format("HH:mm:ss") : "00:00:00"}</p>
+          <p>
+            {sodsLength
+              ? moment.utc(sodsLength).format("HH:mm:ss")
+              : "00:00:00"}
+          </p>
         </div>
-      ); 
+      );
     },
   },
 ];
-// const columns: ColumnDef<reportColumn>[] = [
-//   {
-//     accessorKey: "id",
-//     header: ({ column }) => {
-//       return (
-//         <Button
-//           variant="link"
-//           className="p-0 hover:no-underline"
-//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//         >
-//           User ID
-//           <ArrowUpDown className="ml-2 h-4 w-4" />
-//         </Button>
-//       );
-//     },
-//     cell: ({ row }) => {
-//       return ''; // Không hiển thị nội dung trong ô này
-//     },
-//   },
-//   // Bạn có thể thêm các cột khác ở đây
-// ];
+export const columnsSODUser: ColumnDef<reportColumnSODUser>[] = [
+  {
+    id: "index",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            No.
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="flex justify-center">{row.index + 1}</div>;
+    },
+  },
+  {
+    accessorKey: "seminarId",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Seminar ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const seminarId: number = row.getValue("seminarId");
+      return (
+        <div className="flex justify-center">
+          <p>{seminarId}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "seminarName",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Seminar Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const seminarName: string = row.getValue("seminarName");
+      return (
+        <div className="flex justify-start">
+          <p>{seminarName}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Status
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const status: any = row.getValue("status");
+      let content;
+      switch (status) {
+        case 1:
+          content = (
+            <span className="px-[12px] py-[4px] rounded-[100px] text-[12px] font-medium bg-[#ecfdf3] text-[#4caf50]">
+              Published
+            </span>
+          );
+          break;
+        case 2:
+          content = (
+            <span className="px-[12px] py-[4px] rounded-[100px] text-[12px] font-medium bg-[#fffaeb] text-[#fb6514]">
+              Unpublished
+            </span>
+          );
+          break;
+        default:
+          content = (
+            <span className="px-[12px] py-[4px] rounded-[100px] text-[12px] font-medium bg-[#f2f4f7] text-[#344054]">
+              Draft
+            </span>
+          );
+      }
 
-// export default columns;
+      return <div className="flex justify-center">{content}</div>;
+    },
+  },
+  {
+    accessorKey: "divisions",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Division
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const divisions: string = row.getValue("divisions");
+      return (
+        <div className="flex justify-start">
+          <p>{divisions}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "heldDate",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Held Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let heldDate: string = row.getValue("heldDate");
+      return (
+        <div className="flex justify-start">
+          {" "}
+          <p>{heldDate ? moment(heldDate).format("DD/MM/YYYY") : ""}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "totalDuration",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total Duration
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let totalDuration: string = row.getValue("totalDuration");
+      return (
+        <div className="flex justify-start">
+          {" "}
+          <p>
+            {totalDuration
+              ? moment.utc(+(totalDuration ?? 0)).format("HH:mm:ss")
+              : ""}
+          </p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "videoSize",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total Video Size
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let videoSize: number = row.getValue("videoSize");
+      return (
+        <div className="flex justify-start">
+          {" "}
+          <p>{videoSize ? +((videoSize ?? 0) / 1024 / 1024).toFixed(2) : ""}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "TargetParticipant",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Target Participant
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let TargetParticipant: number = row.getValue("TargetParticipant");
+      return (
+        <div className="flex justify-start">
+          <p>Target Participant</p>
+        </div>
+      );
+    },
+  },
+];

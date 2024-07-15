@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import PageLayout from "@/components/PageLayout";
 import Image from "next/image";
@@ -15,11 +14,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useDispatch } from "react-redux";
 import { updateListVideoUpload } from "@/redux/slices/seminarSlice";
@@ -34,7 +30,7 @@ interface ProgressInfo {
   file: File;
 }
 
-const UploadPage: React.FC = () => {
+export default function UploadPage() {
   const axiosAuth = useApiAuth();
   const dispatch = useDispatch()
   const router = useRouter()
@@ -109,7 +105,7 @@ const UploadPage: React.FC = () => {
             (event.loaded * 100) / event.total
           );
           setProgressInfos((prevProgressInfos) => {
-            const newProgressInfos = [...prevProgressInfos];
+            const newProgressInfos: any = [...prevProgressInfos];
             newProgressInfos[idx].percent = percentCompleted;
             newProgressInfos[idx].status = getStatusCode("UPLOAD_PROGRESS");
             return newProgressInfos;
@@ -118,7 +114,7 @@ const UploadPage: React.FC = () => {
       })
       .then((response) => {
         setProgressInfos((prevProgressInfos) => {
-          const newProgressInfos = [...prevProgressInfos];
+          const newProgressInfos : any = [...prevProgressInfos];
           newProgressInfos[idx].status = getStatusCode("RESPONSE");
           newProgressInfos[idx].id = response.data.id;
           eventAllFileUpload.current.add(response.data.id);
@@ -133,7 +129,7 @@ const UploadPage: React.FC = () => {
       })
       .catch((error) => {
         setProgressInfos((prevProgressInfos) => {
-          const newProgressInfos = [...prevProgressInfos];
+          const newProgressInfos: any = [...prevProgressInfos];
           newProgressInfos[idx].percent = 0;
           newProgressInfos[idx].status = getStatusCode("-1");
           return newProgressInfos;
@@ -272,5 +268,3 @@ const UploadPage: React.FC = () => {
     </PageLayout>
   );
 };
-
-export default UploadPage;

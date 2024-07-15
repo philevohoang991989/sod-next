@@ -6,7 +6,7 @@ import {
   getTranslations,
   unstable_setRequestLocale,
 } from "next-intl/server";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import Navigation from "@/components/Navigation";
 import { locales } from "@/config";
 import Providers from "@/components/providers";
@@ -51,7 +51,9 @@ export default async function LocaleLayout({
         <ProvidersRedux>
           <Providers>
             <NextIntlClientProvider messages={messages}>
+            <Suspense fallback={<div>Loading...</div>}>
               {children}
+              </Suspense>
               <Toaster />
             </NextIntlClientProvider>
           </Providers>
