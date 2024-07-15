@@ -50,3 +50,27 @@ export type reportColumnSODUser = {
   videoSize?: number;
   TargetParticipant?: string;
 };
+export type reportScoringReport ={
+  index?: number;
+  seminarId?:number;
+  seminarName?:string;
+  totalScoredCount?: number;
+  score1Count?: number;
+  score2Count?: number;
+  score3Count?: number;
+  score4Count?: number;
+  score5Count?: number;
+  score6Count?: number;
+  score7Count?: number;
+  score8Count?: number;
+  score9Count?: number;
+  score10Count?: number;
+  averageScore?: number
+};
+export type reportRecommendedList ={
+  index?: number;
+  seminarId?:number;
+  seminarName?:string;
+  addedDate?: string;
+  removedDate?: string
+}
