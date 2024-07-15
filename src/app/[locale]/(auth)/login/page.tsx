@@ -25,6 +25,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useCookies } from "react-cookie";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -69,6 +70,7 @@ export default function Login() {
   const [isOtp, setIsOtp] = useState<boolean>(false);
 
   const axiosAuth = useApiAuth();
+  const [cookie, setCookie] = useCookies(["userId"]);
   const onSubmit = async (data: LoginFormValues) => {
     toast({
       title: "You submitted the following values:",
@@ -84,9 +86,10 @@ export default function Login() {
         password: btoa(data.password),
       })
       .then((res) => {
-        console.log({ res });
+        setCookie("userId", res.data);
         axiosAuth.post(`Authentication/otp?userId=${res.data}`, {});
         setIsOtp(true);
+
       });
   };
   const form = useForm<LoginFormValues>({
