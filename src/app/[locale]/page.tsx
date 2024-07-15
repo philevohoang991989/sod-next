@@ -30,7 +30,7 @@ export default function IndexPage({ params: { locale } }: Props) {
                 Admin
               </Label>
             </a>
-            <a>
+            <a href="/learning/seminar/list">
               <RadioGroupItem
                 value="paypal"
                 id="paypal"

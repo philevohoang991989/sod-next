@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import TabAll from "./components/tab-all";
+import { parseParams } from "@/lib/utils";
 
 export default function SeminarList() {
   const { data: session } = useSession();
@@ -16,7 +17,7 @@ export default function SeminarList() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [pageCount, setPageCount] = useState(0);
-  const [filter, setFilter] = useState({
+  const [filter, setFilter] = useState<any>({
     page: page,
     pageSize: pageSize,
   });
@@ -27,13 +28,16 @@ export default function SeminarList() {
       axiosAuth
         .get(`User/${cookie.userId}/Seminars`, {
           params: filter,
+          paramsSerializer: params => parseParams(params) 
         })
         .then((res) => {
           console.log({ res });
           setListSeminar(res.data.items);
           setPageCount(res.data.totalFilter);
         });
-  }, [session, cookie]);
+  }, [session, cookie,filter]);
+  console.log({filter});
+  
   return (
     <div className="w-full">
       <Tabs defaultValue="1">
@@ -58,7 +62,7 @@ export default function SeminarList() {
         </div>
         <div className="container m-w-2xl">
           <TabsContent value="1">
-            <TabAll listSeminar={listSeminar} setFilter={(value: any)=>setFilter(value)}/>
+            <TabAll listSeminar={listSeminar} setFilter={(value: any)=>setFilter(value)} filter={filter}/>
           </TabsContent>
           <TabsContent value="2">content 2</TabsContent>
           <TabsContent value="3">content 3</TabsContent>
