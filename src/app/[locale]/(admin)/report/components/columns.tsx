@@ -8,6 +8,7 @@ import {
   reportHitRateByGrade,
   reportRecommendedList,
   reportScoringReport,
+  reportSODAdmin,
   reportVideoStatistic,
 } from "./interface";
 import { Button } from "@/components/ui/button";
@@ -1447,6 +1448,325 @@ export const columnsRecommendedList: ColumnDef<reportRecommendedList>[] = [
         <div className="flex justify-start">
           {" "}
           <p>{removedDate ? moment(removedDate).format("DD/MM/YYYY") : ""}</p>
+        </div>
+      );
+    },
+  },
+];
+export const columnsSODAdmin: ColumnDef<reportSODAdmin>[] = [
+  {
+    id: "index",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            No.
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="flex justify-center">{row.index + 1}</div>;
+    },
+  },
+  {
+    accessorKey: "seminarId",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Seminar ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const seminarId: number = row.getValue("seminarId");
+      return (
+        <div className="flex justify-center">
+          <p>{seminarId}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "seminarName",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Seminar Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const seminarName: string = row.getValue("seminarName");
+      return (
+        <div className="flex justify-start">
+          <p>{seminarName}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return <div className="flex justify-center">Status</div>;
+    },
+    cell: ({ row }) => {
+      const status: any = row.getValue("status");
+      let content;
+
+      switch (status) {
+        case "Published":
+          content = (
+            <span className="px-[12px] py-[4px] rounded-[100px] text-[12px] font-medium bg-[#ecfdf3] text-[#4caf50]">
+              Published
+            </span>
+          );
+          break;
+        case "Unpublished":
+          content = (
+            <span className="px-[12px] py-[4px] rounded-[100px] text-[12px] font-medium bg-[#fffaeb] text-[#fb6514]">
+              Unpublished
+            </span>
+          );
+          break;
+        default:
+          content = (
+            <span className="px-[12px] py-[4px] rounded-[100px] text-[12px] font-medium bg-[#f2f4f7] text-[#344054]">
+              Draft
+            </span>
+          );
+      }
+
+      return <div className="flex justify-center">{content}</div>;
+    },
+  },
+  {
+    accessorKey: "courseCurriculum",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Course Curriculum
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const courseCurriculum: number = row.getValue("courseCurriculum");
+      return (
+        <div className="flex justify-start">
+          <p>{courseCurriculum}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "courseSubject",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Course Subject
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const courseSubject: string = row.getValue("courseSubject");
+      return (
+        <div className="flex justify-start">
+          <p>{courseSubject}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "division",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Division
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const division: string = row.getValue("division");
+      return (
+        <div className="flex justify-start">
+          <p>{division}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "publishedDate",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Published Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let publishedDate: string = row.getValue("publishedDate");
+      return (
+        <div className="flex justify-start">
+          {" "}
+          <p>
+            {publishedDate ? moment(publishedDate).format("DD/MM/YYYY") : ""}
+          </p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "heldDate",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-start">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Held Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let heldDate: string = row.getValue("heldDate");
+      return (
+        <div className="flex justify-start">
+          {" "}
+          <p>
+            {heldDate ? moment(heldDate).format("DD/MM/YYYY") : ""}
+          </p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "totalDuration",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total Duration
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let totalDuration: string = row.getValue("totalDuration");
+      return (
+        <div className="flex justify-center">
+          {" "}
+          <p>
+            {totalDuration
+              ? moment.utc(+(totalDuration ?? 0)).format("HH:mm:ss")
+              : ""}
+          </p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "totalVideoSize",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total Video Size
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let totalVideoSize: number = row.getValue("totalVideoSize");
+      return (
+        <div className="flex justify-center">
+          {" "}
+          <p>{totalVideoSize ? +((totalVideoSize ?? 0) / 1024 / 1024).toFixed(2) : ""}</p>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "totalPart",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-center">
+          <Button
+            className="p-0"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total Part
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      let totalPart: number = row.getValue("totalPart");
+      return (
+        <div className="flex justify-center">
+          {" "}
+          <p>{totalPart ? totalPart : 0}</p>
         </div>
       );
     },

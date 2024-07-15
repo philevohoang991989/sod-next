@@ -41,7 +41,7 @@ export type reportVideoStatistic = {
 };
 export type reportColumnSODUser = {
   index?: number;
-  seminarId?:number;
+  seminarId?: number;
   seminarName?: string;
   status?: number;
   divisions?: string;
@@ -50,10 +50,10 @@ export type reportColumnSODUser = {
   videoSize?: number;
   TargetParticipant?: string;
 };
-export type reportScoringReport ={
+export type reportScoringReport = {
   index?: number;
-  seminarId?:number;
-  seminarName?:string;
+  seminarId?: number;
+  seminarName?: string;
   totalScoredCount?: number;
   score1Count?: number;
   score2Count?: number;
@@ -65,12 +65,27 @@ export type reportScoringReport ={
   score8Count?: number;
   score9Count?: number;
   score10Count?: number;
-  averageScore?: number
+  averageScore?: number;
 };
-export type reportRecommendedList ={
+export type reportRecommendedList = {
   index?: number;
-  seminarId?:number;
-  seminarName?:string;
+  seminarId?: number;
+  seminarName?: string;
   addedDate?: string;
-  removedDate?: string
-}
+  removedDate?: string;
+};
+
+export type reportSODAdmin = {
+  index?: number;
+  seminarId?: number;
+  seminarName?: string;
+  status?: any;
+  courseCurriculum?: string;
+  courseSubject?: string;
+  division?: string;
+  publishedDate?: string;
+  heldDate?: string;
+  totalDuration?: number;
+  totalVideoSize?: number;
+  totalPart?: number;
+};

@@ -6,6 +6,7 @@ import {
   columnsHitRateByGrade,
   columnsRecommendedList,
   columnsScoringReport,
+  columnsSODAdmin,
   columnsSODUser,
   columnsVideoStatistic,
   colunsHitRateByAccumulatedDuration,
@@ -28,12 +29,8 @@ export default function ReportPage() {
     addedDateTo: moment().format("MM-DD-YYYY"),
   });
   useEffect(() => {
-    console.log({ page: typeof reportType });
 
     switch (reportType) {
-      // case 1:
-      //   setColumns(columnsDurationByGrade);
-      //   break;
       case "2":
         setColumns(columnsHitRateByGrade);
         break;
@@ -51,6 +48,9 @@ export default function ReportPage() {
         break;
       case "7":
         setColumns(columnsRecommendedList);
+        break;
+      case "8":
+        setColumns(columnsSODAdmin);
         break;
       default:
         setColumns(columnsDurationByGrade);

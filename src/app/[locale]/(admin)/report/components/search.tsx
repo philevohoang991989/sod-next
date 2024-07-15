@@ -63,7 +63,7 @@ interface Props {
   setListReport?: (data: any) => void;
   setReportType?: (data: any) => void;
   setPageCount?: (data: any) => void;
-  reportType: any
+  reportType: any;
 }
 export default function SearchReport({
   setFilter,
@@ -71,7 +71,7 @@ export default function SearchReport({
   setReportType,
   filter,
   reportType,
-  setPageCount
+  setPageCount,
 }: Props) {
   const { data: session } = useSession();
   const axiosAuth = useApiAuth();
@@ -82,8 +82,6 @@ export default function SearchReport({
     defaultValues,
   });
   const onSubmit = async (data: SearchFormValues) => {
-    console.log({ data });
-
     typeof setFilter === "function" && setFilter(data);
   };
   useEffect(() => {
@@ -93,17 +91,16 @@ export default function SearchReport({
       });
     session &&
       axiosAuth.get(ENDPOINT.REPORT_TYPE).then((res) => {
-        console.log(res.data);
         setListReportType(res.data);
-       typeof setReportType === 'function' && setReportType(res.data[0].id);
+        typeof setReportType === "function" && setReportType(res.data[0].id);
       });
   }, [session]);
   useEffect(() => {
-    session &&reportType &&
+    session &&
+      reportType &&
       axiosAuth.get(`Report/${reportType}`, { params: filter }).then((res) => {
-        console.log(res.data);
-        typeof setListReport === 'function' && setListReport(res.data.results);
-        typeof setPageCount === 'function' && setPageCount(res.data.rowCount);
+        typeof setListReport === "function" && setListReport(res.data.results);
+        typeof setPageCount === "function" && setPageCount(res.data.rowCount);
       });
   }, [session, reportType, filter]);
 
@@ -111,8 +108,7 @@ export default function SearchReport({
     <div className="mb-[1.5rem] flex gap-2">
       <Select
         onValueChange={(value) => {
-          console.log({ value });
-          typeof setReportType ==='function' && setReportType(value);
+          typeof setReportType === "function" && setReportType(value);
         }}
         value={`${reportType}`}
       >
@@ -181,8 +177,6 @@ export default function SearchReport({
                                   value={seminar.seminarName}
                                   key={seminar.id}
                                   onSelect={() => {
-                                    console.log({ setValue: `${seminar.id}` });
-
                                     form.setValue(
                                       "seminarName",
                                       `${seminar.id}`
