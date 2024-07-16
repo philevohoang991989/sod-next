@@ -10,14 +10,14 @@ interface AdminLayoutProps {
 }
 export default function LearningLayout({ children }: AdminLayoutProps) {
   return (
-    <div>
+    <div className="overflow-y-hidden">
       <div className="flex w-[100%] bg-primary">
         <div className="container flex gap-[60px] m-w-2xl py-[1rem]">
           <Image src={Logo} alt="logo" />
           <MenuNav />
         </div>
       </div>
-      <div className="m-w-2xl">{children}</div>
+      <div className="m-w-2xl overflow-y-hidden">{children}</div>
     </div>
   );
 }
