@@ -19,7 +19,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import useApiAuth from "@/lib/hook/useAxiosAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
@@ -32,12 +36,14 @@ import { cn } from "@/lib/utils";
 
 const searchFormSchema = z.object({
   courseIds: z.any().optional(),
+  search: z.string().optional(),
   speakerIds: z.any().optional(),
   publishedDateFrom: z.date().optional(),
   publishedDateTo: z.date().optional(),
 });
 type SearchFormValues = z.infer<typeof searchFormSchema>;
 const defaultValues: Partial<SearchFormValues> = {
+  search: "",
   courseIds: [],
   speakerIds: [],
   publishedDateFrom: undefined,
@@ -89,7 +95,7 @@ export default function Search({ setFilter, filter }: Props) {
     course.fullName.toLowerCase().includes(searchSpeaker.toLowerCase())
   );
   return (
-    <div className="w-[350px] bg-white p-4 rounded-lg">
+    <div className="w-[20rem]  p-4 rounded-lg">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -101,6 +107,20 @@ export default function Search({ setFilter, filter }: Props) {
               Clear (6)
             </Button>
           </div>
+          <FormField
+            control={form.control}
+            name="search"
+            render={({ field }) => {
+              return (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Input className="w-[100%] bg-white" {...field} />
+                  </FormControl>
+                </FormItem>
+              );
+            }}
+          />
+
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="course-subject" className="border-none ">
               <AccordionTrigger className="font-medium text-[1rem]]">
@@ -203,7 +223,7 @@ export default function Search({ setFilter, filter }: Props) {
 
             <AccordionItem value="published-date" className="border-none ">
               <AccordionTrigger className="font-medium text-[1rem]]">
-              Published Date
+                Published Date
               </AccordionTrigger>
               <AccordionContent>
                 <div className="flex justify-between gap-1 relative">
@@ -277,7 +297,7 @@ export default function Search({ setFilter, filter }: Props) {
                   />
                 </div>
               </AccordionContent>
-              </AccordionItem>
+            </AccordionItem>
           </Accordion>
           <Button type="submit">Search</Button>
         </form>

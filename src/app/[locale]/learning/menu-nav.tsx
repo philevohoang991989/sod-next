@@ -10,7 +10,7 @@ export default function MenuNav() {
   console.log({path});
   
   return (
-    <div className="flex gap-4 items-center">
+    <div className="hidden  gap-4 items-center md:flex">
       <Link
         href=""
         className={cn(
