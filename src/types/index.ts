@@ -57,3 +57,37 @@ export interface SemianarType {
   totalDuration?: number;
   videos: any;
 }
+export interface Speaker {
+  id: number;
+  title: string;
+  email: string;
+  fullName: string;
+}
+export interface InfoTimeSpan {
+  id?: number;
+  videoId?: number;
+  time?: number;
+  description?: string
+}
+export interface InfoVideoUser{
+  id?: number;
+  duration?: number;
+  title?: string;
+  languageVideoId?: number;
+  asTrailer?: boolean;
+  videoName?: string;
+  streamUrl?: string;
+  tags?: string ;
+  status?: number;
+  size?: number;
+  type?: string;
+  metaData?: string;
+  seminarId?: number;
+  createDateTime?: string;
+  speakers?: Speaker[] | null;
+  viewed?: boolean;
+  viewedAll?: boolean;
+  timeSpanVideos?: InfoTimeSpan[];
+  isTheLastViewed?: boolean;
+  totalDuration?: number;
+}
