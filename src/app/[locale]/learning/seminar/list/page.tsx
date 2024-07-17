@@ -6,7 +6,7 @@ import TabAll from "./components/tab-all";
 export default function SeminarList() {
   
   return (
-    <div className="w-full">
+    <div className="w-full h-[100vh]">
       <Tabs defaultValue="1">
         <div className="bg-white w-[100%] h-[100%]">
           {" "}

@@ -12,12 +12,15 @@ import Image from "next/image";
 import IcFilter from "@/assets/icons/ic_filter.svg";
 import IcMenu from "@/assets/icons/ic_menu.svg";
 import { Input } from "@/components/ui/input";
+import ItemSeminar from "./item-seminar";
+import PaginationComponent from "@/components/pagination-table";
 
 export default function TabAll() {
   const { data: session } = useSession();
   const axiosAuth = useApiAuth();
   const [page, setPage] = useState(1);
   const [isSearch, setIsSearch] = useState(false);
+  const [isGrid, setIsGrid] = useState(true)
   const [pageSize, setPageSize] = useState(10);
   const [pageCount, setPageCount] = useState(0);
   const [filter, setFilter] = useState<any>({
@@ -40,8 +43,17 @@ export default function TabAll() {
         });
   }, [session, cookie, filter]);
   console.log({ filter });
+  useEffect(() => {
+    setFilter({
+      ...filter,
+      page: page,
+      pageSize: pageSize,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, pageSize]);
+
   return (
-    <div className="">
+    <div className="pb-4">
       <div className="mt-8 mb-4 flex justify-start gap-3 items-center">
         <Button
           onClick={() => setIsSearch(!isSearch)}
@@ -56,7 +68,7 @@ export default function TabAll() {
           </div>
         </Button>
         <MobileSearch setFilter={setFilter} filter={filter} />
-        <Button className="bg-white shadow-none h-[2.5rem]">
+        <Button className="bg-white shadow-none h-[2.5rem]" onClick={()=> setIsGrid(!isGrid)}>
           <Image src={IcMenu} alt="IcMenu" />
         </Button>
       </div>
@@ -66,27 +78,31 @@ export default function TabAll() {
             <Search setFilter={setFilter} filter={filter} />
           </div>
         )}
-
         <div
           className={cn(
-            "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full",
-            isSearch && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            
+            isSearch &&
+              "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 ",
+              isGrid ?"grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full":'flex flex-col gap-4 w-full'
           )}
         >
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
-          <div className="bg-black w-[100%]">01</div>
+          {listSeminar.map((item, index) => (
+            <ItemSeminar
+              key={index}
+              isGrid={isGrid}
+              itemSeminar={item}
+              aspectRatio="portrait"
+            />
+          ))}
         </div>
       </div>
+      <PaginationComponent
+        pageSize={pageSize}
+        currentPage={page}
+        itemCount={pageCount}
+        setPageSize={(value: string) => setPageSize(parseInt(value))}
+        setCurrentPage={(value: string) => setPage(parseInt(value))}
+      />
     </div>
   );
 }

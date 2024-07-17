@@ -70,7 +70,13 @@ export default function Search({ setFilter, filter }: Props) {
 
     setDataSearch((prevFilter) => ({
       ...prevFilter,
+      page: 1,
+      pageSize: 10,
       ...data,
+      publishedDateFrom:
+        data.publishedDateFrom === undefined ? "" : data.publishedDateFrom,
+      publishedDateTo:
+        data.publishedDateTo === undefined ? "" : data.publishedDateTo,
     }));
   };
   useEffect(() => {
