@@ -17,14 +17,18 @@ export default function ListTimestamp() {
       });
   }, [learning.idVideo, session]);
   return (
-    <div>
+    <div className="flex flex-col gap-2">
+        <div className="mb-[1rem]">
+        <p className="text-[1rem] font-semibold text-[#292D32]">Timestamp</p></div>
       {listTimestamp &&
         listTimestamp.length &&
         listTimestamp.map((item: any, index: number) => {
           return (
-            <React.Fragment key={index}>
-              <span>{item.description}</span>
-              <div className="value-timestamp">
+            <div key={index}>
+              <span className="font-medium text-[14px] text-[#101828]">
+                {item.description}
+              </span>
+              <div className="font-medium text-[14px] text-[#667085]">
                 {index === 0
                   ? "00:00:00"
                   : listTimestamp.length === index + 1
@@ -45,7 +49,7 @@ export default function ListTimestamp() {
                       .format("HH:mm:ss")
                   : 0}
               </div>
-            </React.Fragment>
+            </div>
           );
         })}
     </div>
