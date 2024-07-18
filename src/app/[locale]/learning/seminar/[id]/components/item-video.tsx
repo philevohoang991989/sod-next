@@ -14,7 +14,7 @@ export default function ItemVideo({ itemVideo }: Props) {
   return (
     <div className="item">
       <RadioGroupItem
-        value={`${itemVideo.id}`}
+        value={itemVideo}
         id={`${itemVideo.id}`}
         className="peer sr-only"
       />

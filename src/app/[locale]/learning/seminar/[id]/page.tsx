@@ -9,7 +9,11 @@ import { useCookies } from "react-cookie";
 import { InfoVideoUser } from "@/types";
 import HeaderListVideo from "./components/header-list-video";
 import { useDispatch, useSelector } from "react-redux";
-import { updateDuration, updateIdVideo, updateInfoVideo } from "@/redux/slices/learningSlice";
+import {
+  updateDuration,
+  updateIdVideo,
+  updateInfoVideo,
+} from "@/redux/slices/learningSlice";
 import ItemVideo from "./components/item-video";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -54,9 +58,7 @@ export default function DetailSemianr() {
         setListVideo(listVideo);
         dispatch(updateIdVideo(listVideo[0].id));
         dispatch(updateInfoVideo(videoSeminarUser[0]));
-        // this.idItemSelected = res.videoSeminarUser[0].id;
-        // this.idVideoChange = res.videoSeminarUser[0].id;
-        // this.infoVideo = res.videoSeminarUser[0];
+        dispatch(updateDuration(videoSeminarUser[0].duration));
       }
     } catch (error) {
       console.error("Error fetching data", error);
@@ -103,8 +105,10 @@ export default function DetailSemianr() {
               />
               <div className="flex flex-col gap-2">
                 <RadioGroup
-                  defaultValue={
-                    learning && learning.idVideo && `${learning.idVideo}`
+                  onValueChange={(value: any) => {
+                    dispatch(updateDuration(value.duration));
+                  }}
+                  defaultValue={`${learning.infoVideo}`
                   }
                   className="flex flex-col gap-3"
                 >

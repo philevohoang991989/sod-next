@@ -47,7 +47,8 @@ export default function ListTimestamp() {
                   ? moment
                       .utc(+(listTimestamp[index + 1].time - 1000 ?? 0))
                       .format("HH:mm:ss")
-                  : 0}
+                  : moment
+                  .utc(+(learning.duration)).format("HH:mm:ss")}
               </div>
             </div>
           );
