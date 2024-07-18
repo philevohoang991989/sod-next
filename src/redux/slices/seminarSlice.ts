@@ -11,7 +11,7 @@ const initialState = {
 
 //Create the slice with Reducers
 const seminarSlice = createSlice({
-  name: "cart",
+  name: "seminar",
   initialState,
   reducers: {
     updateIdCourse: (state, action) => {

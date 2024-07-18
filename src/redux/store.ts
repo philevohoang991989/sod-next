@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import seminarSlice from "./slices/seminarSlice";
+import learningSlice from "./slices/learningSlice";
 
 //create a store and give it reducers
 
@@ -8,6 +9,7 @@ export const makeStore = () => {
   return configureStore({
     reducer: {
       seminar: seminarSlice,
+      learning: learningSlice
     }
   })
 }
