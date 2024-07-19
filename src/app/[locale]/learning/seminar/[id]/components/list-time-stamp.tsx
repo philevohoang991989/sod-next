@@ -20,8 +20,8 @@ export default function ListTimestamp() {
     <div className="flex flex-col gap-2">
         <div className="mb-[1rem]">
         <p className="text-[1rem] font-semibold text-[#292D32]">Timestamp</p></div>
-      {listTimestamp &&
-        listTimestamp.length &&
+      {(listTimestamp &&
+        listTimestamp.length) ?
         listTimestamp.map((item: any, index: number) => {
           return (
             <div key={index}>
@@ -52,7 +52,7 @@ export default function ListTimestamp() {
               </div>
             </div>
           );
-        })}
+        }):''}
     </div>
   );
 }

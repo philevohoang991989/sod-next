@@ -12,7 +12,7 @@ export default function MenuNav() {
   return (
     <div className="hidden  gap-4 items-center md:flex">
       <Link
-        href=""
+        href="/learning/seminar/list"
         className={cn(
           buttonVariants({ variant: "ghost" }),
           "px-4 py-2 rounded-lg text-white",
