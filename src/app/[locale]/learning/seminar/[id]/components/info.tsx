@@ -12,7 +12,7 @@ export default function Info({ infoSeminar, infoVideo }: Props) {
 
   return (
     <div>
-      <p className="text-[16px] font-medium text-[#101828]">
+      <p className="mb-4 text-[16px] font-medium text-[#101828]">
         {infoVideo.title}
       </p>
       {infoVideo.streamUrl && (
