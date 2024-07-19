@@ -1,4 +1,5 @@
 "use client";
+import VideoPlayer from "@/components/video-player";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 interface Props {
@@ -12,12 +13,9 @@ export default function Info({ infoSeminar, infoVideo }: Props) {
         {infoVideo.title}
       </p>
       {infoVideo.streamUrl && (
-        <iframe
-          width="100%"
-          height="350px"
-          title="video"
-          src={`https://sod-antmedia-137-184-249-221.nip.io/WebRTCAppEE/play.html?id=streams/${infoVideo.streamUrl}.mp4&playOrder=vod`}
-        ></iframe>
+        <VideoPlayer
+          src={`https://sod-antmedia-137-184-249-221.nip.io/WebRTCAppEE/streams/${infoVideo.streamUrl}.m3u8`}
+        />
       )}
     </div>
   );

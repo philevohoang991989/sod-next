@@ -98,7 +98,7 @@ export default function DetailSemianr() {
       <div className="container m-w-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-8 ">
           <div className="col-span-1 lg:col-span-3 bg-white p-4 rounded-xl">
-            <Info infoSeminar={infoSeminar} infoVideo={infoVideo}/>
+            <Info infoSeminar={infoSeminar?infoSeminar:{}} infoVideo={infoVideo?infoVideo:{}}/>
           </div>
           <div className="col-span-1 flex flex-col gap-4">
             <div className="bg-white p-4 rounded-xl">
