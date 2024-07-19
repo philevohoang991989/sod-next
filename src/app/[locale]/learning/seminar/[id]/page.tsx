@@ -12,12 +12,14 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   updateDuration,
   updateIdVideo,
+  updateInfoSeminar,
   updateInfoVideo,
 } from "@/redux/slices/learningSlice";
 import ItemVideo from "./components/item-video";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import ListTimestamp from "./components/list-time-stamp";
+import Info from "./components/info";
 
 export default function DetailSemianr() {
   const learning = useSelector((state: any) => state.learning);
@@ -29,10 +31,12 @@ export default function DetailSemianr() {
   const params = useParams();
   const [infoSeminar, setInfoSeminar] = useState<any>({});
   const [listVideo, setListVideo] = useState<any>();
+  const [infoVideo, setInfoVideo] = useState<any>();
   const getInfoSeminar = () => {
     session &&
       axiosAuth.get(`Seminar/${params.id}/user`).then((res: any) => {
         setInfoSeminar(res.data);
+        dispatch(updateInfoSeminar(res.data))
       });
   };
   const getListVideos = async () => {
@@ -56,6 +60,7 @@ export default function DetailSemianr() {
         });
 
         setListVideo(listVideo);
+        setInfoVideo(listVideo[0])
         dispatch(updateIdVideo(listVideo[0].id));
         dispatch(updateInfoVideo(videoSeminarUser[0]));
         dispatch(updateDuration(videoSeminarUser[0].duration));
@@ -93,7 +98,7 @@ export default function DetailSemianr() {
       <div className="container m-w-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-8 ">
           <div className="col-span-1 lg:col-span-3 bg-white p-4 rounded-xl">
-            asddsa
+            <Info infoSeminar={infoSeminar} infoVideo={infoVideo}/>
           </div>
           <div className="col-span-1 flex flex-col gap-4">
             <div className="bg-white p-4 rounded-xl">
@@ -107,9 +112,9 @@ export default function DetailSemianr() {
                 <RadioGroup
                   onValueChange={(value: any) => {
                     dispatch(updateDuration(value.duration));
+                    setInfoVideo(value)
                   }}
-                  defaultValue={`${learning.infoVideo}`
-                  }
+                  defaultValue={`${learning.infoVideo}`}
                   className="flex flex-col gap-3"
                 >
                   {listVideo &&
@@ -119,9 +124,13 @@ export default function DetailSemianr() {
                 </RadioGroup>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-xl">
-              <ListTimestamp />
-            </div>
+            {learning.infoVideo.asTrailer ? (
+              ""
+            ) : (
+              <div className="bg-white p-4 rounded-xl">
+                <ListTimestamp />
+              </div>
+            )}
           </div>
         </div>
       </div>

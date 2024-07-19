@@ -1,12 +1,7 @@
 "use client";
 import Image from "next/image";
 import Logo from "@/assets/icons/logo.svg";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 import MenuNav from "./menu-nav";
-import { Suspense } from "react";
-import { Loader } from "lucide-react";
-import Loading from "./loading";
 
 interface AdminLayoutProps {
   children: React.ReactNode;

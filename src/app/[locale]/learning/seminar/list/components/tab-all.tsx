@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-
 import { useEffect, useState } from "react";
 import Search from "./search";
 import { useSession } from "next-auth/react";
@@ -12,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import IcFilter from "@/assets/icons/ic_filter.svg";
 import IcMenu from "@/assets/icons/ic_menu.svg";
-import { Input } from "@/components/ui/input";
 import ItemSeminar from "./item-seminar";
 import PaginationComponent from "@/components/pagination-table";
 
@@ -21,7 +19,7 @@ export default function TabAll() {
   const axiosAuth = useApiAuth();
   const [page, setPage] = useState(1);
   const [isSearch, setIsSearch] = useState(false);
-  const [isGrid, setIsGrid] = useState(true)
+  const [isGrid, setIsGrid] = useState(true);
   const [pageSize, setPageSize] = useState(10);
   const [pageCount, setPageCount] = useState(0);
   const [filter, setFilter] = useState<any>({
@@ -30,9 +28,9 @@ export default function TabAll() {
   });
   const [listSeminar, setListSeminar] = useState([]);
   const [cookie] = useCookies(["userId"]);
-  useEffect(() => {
-    session &&
-      axiosAuth
+  const getList = () => {
+   if(session){
+    axiosAuth
         .get(`User/${cookie.userId}/Seminars`, {
           params: filter,
           paramsSerializer: (params) => parseParams(params),
@@ -41,7 +39,14 @@ export default function TabAll() {
           console.log({ res });
           setListSeminar(res.data.items);
           setPageCount(res.data.totalFilter);
+        }).catch((error) => {
+          console.error('Error fetching seminars:', error);
         });
+   }
+      
+  };
+  useEffect(() => {
+    getList();
   }, [session, cookie, filter]);
   console.log({ filter });
   useEffect(() => {
@@ -69,7 +74,10 @@ export default function TabAll() {
           </div>
         </Button>
         <MobileSearch setFilter={setFilter} filter={filter} />
-        <Button className="bg-white shadow-none h-[2.5rem]" onClick={()=> setIsGrid(!isGrid)}>
+        <Button
+          className="bg-white shadow-none h-[2.5rem]"
+          onClick={() => setIsGrid(!isGrid)}
+        >
           <Image src={IcMenu} alt="IcMenu" />
         </Button>
       </div>
@@ -81,10 +89,11 @@ export default function TabAll() {
         )}
         <div
           className={cn(
-            
             isSearch &&
               "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 ",
-              isGrid ?"grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full":'flex flex-col gap-4 w-full'
+            isGrid
+              ? "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full"
+              : "flex flex-col gap-4 w-full"
           )}
         >
           {listSeminar.map((item, index) => (
