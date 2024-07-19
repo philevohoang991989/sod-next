@@ -43,22 +43,7 @@ export default function VideoPlayer({ src }: { src: string }) {
     playerRef.current = video && new Plyr(video, {});
   }, [src]);
 
-  const toggleVideo = () => {
-    const video = videoRef.current;
-    if (video) {
-      video.paused ? video.play() : video.pause();
-    }
-  };
-
   return (
-    <>
-      <video ref={videoRef} controls />
-      <button onClick={toggleVideo}>Toggle Play/Pause</button>
-      <style jsx>{`
-        video {
-          max-width: 100%;
-        }
-      `}</style>
-    </>
+    <video ref={videoRef} autoPlay />
   );
 }
