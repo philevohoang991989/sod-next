@@ -37,12 +37,12 @@ export default function ItemVideo({ itemVideo }: Props) {
           </div>
           <div className="flex items-center gap-[6px]">
             <User size={18} color="#667085"/>
-            <div className="mt-1">{itemVideo.speakers.map((item: any, index: number) => {
+            <div className="mt-1 w-[100%]">{itemVideo.speakers.map((item: any, index: number) => {
               return (
-                <p key={index} className="text-[12px] font-medium">
+                <span key={index} className="text-[12px] font-medium">
                   {item.fullName}
                   {itemVideo.speakers.length === index + 1 ? "" : ","}{" "}
-                </p>
+                </span>
               );
             })}</div>
           </div>
