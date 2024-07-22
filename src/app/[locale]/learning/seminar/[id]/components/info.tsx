@@ -8,7 +8,6 @@ interface Props {
   infoVideo: any;
 }
 export default function Info({ infoSeminar, infoVideo }: Props) {
-  console.log({ infoVideo });
 
   return (
     <div>

@@ -14,13 +14,13 @@ export default function ItemVideo({ itemVideo }: Props) {
   return (
     <div className="item">
       <RadioGroupItem
-        value={itemVideo}
+        value={`${itemVideo.id}`}
         id={`${itemVideo.id}`}
         className="peer sr-only"
       />
       <Label
         htmlFor={`${itemVideo.id}`}
-        className="flex items-center justify-between rounded-md border-[2px] border-[#3A7EDC] bg-white p-4 hover:bg-[#EFF8FF] hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-[#EFF8FF] [&:has([data-state=checked])]:border-primary"
+        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
         onClick={() => {
           dispatch(updateIdVideo(itemVideo.id));
         }}

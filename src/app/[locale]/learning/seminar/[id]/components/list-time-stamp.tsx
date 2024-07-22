@@ -12,7 +12,6 @@ export default function ListTimestamp() {
   useEffect(() => {
     session &&
       axiosAuth.get(`video/${learning.idVideo}/time-span`).then((res) => {
-        console.log({ res });
         setListTimestamp(res.data);
       });
   }, [learning.idVideo, session]);

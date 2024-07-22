@@ -32,11 +32,12 @@ export default function DetailSemianr() {
   const [infoSeminar, setInfoSeminar] = useState<any>({});
   const [listVideo, setListVideo] = useState<any>();
   const [infoVideo, setInfoVideo] = useState<any>();
+  const [idVideo, setIdVideo] = useState<any>();
   const getInfoSeminar = () => {
     session &&
       axiosAuth.get(`Seminar/${params.id}/user`).then((res: any) => {
         setInfoSeminar(res.data);
-        dispatch(updateInfoSeminar(res.data))
+        dispatch(updateInfoSeminar(res.data));
       });
   };
   const getListVideos = async () => {
@@ -60,7 +61,8 @@ export default function DetailSemianr() {
         });
 
         setListVideo(listVideo);
-        setInfoVideo(listVideo[0])
+        setInfoVideo(listVideo[0]);
+        setIdVideo(listVideo[0].id);
         dispatch(updateIdVideo(listVideo[0].id));
         dispatch(updateInfoVideo(videoSeminarUser[0]));
         dispatch(updateDuration(videoSeminarUser[0].duration));
@@ -73,7 +75,13 @@ export default function DetailSemianr() {
     getInfoSeminar();
     getListVideos();
   }, [session]);
-  console.log({ listVideo });
+  useEffect(() => {
+    session &&
+      axiosAuth.get(`Video/${idVideo}`).then((res) => {
+        setInfoVideo(res.data)
+        dispatch(updateDuration(res.data.duration));
+      });
+  }, [session, idVideo]);
 
   return (
     <div>
@@ -98,7 +106,10 @@ export default function DetailSemianr() {
       <div className="container m-w-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-8 ">
           <div className="col-span-1 lg:col-span-3 bg-white p-4 rounded-xl">
-            <Info infoSeminar={infoSeminar?infoSeminar:{}} infoVideo={infoVideo?infoVideo:{}}/>
+            <Info
+              infoSeminar={infoSeminar ? infoSeminar : {}}
+              infoVideo={infoVideo ? infoVideo : {}}
+            />
           </div>
           <div className="col-span-1 flex flex-col gap-4">
             <div className="bg-white p-4 rounded-xl">
@@ -108,21 +119,25 @@ export default function DetailSemianr() {
                 isHide={isHide}
                 setIsHide={(value: boolean) => setIsHide(value)}
               />
-              <div className="flex flex-col gap-2">
-                <RadioGroup
-                  onValueChange={(value: any) => {
-                    dispatch(updateDuration(value.duration));
-                    setInfoVideo(value)
-                  }}
-                  defaultValue={`${learning.infoVideo}`}
-                  className="flex flex-col gap-3"
-                >
-                  {listVideo &&
-                    listVideo.map((item: any, index: number) => {
-                      return <ItemVideo key={index} itemVideo={item} />;
-                    })}
-                </RadioGroup>
-              </div>
+              {listVideo && listVideo.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <RadioGroup
+                    onValueChange={(value: any) => {
+                      // dispatch(updateDuration(value.duration));
+                      setIdVideo(value);
+                    }}
+                    defaultValue={
+                      listVideo && listVideo.length > 0 && `${listVideo[0].id}`
+                    }
+                    className="flex flex-col gap-3"
+                  >
+                    {listVideo &&
+                      listVideo.map((item: any, index: number) => {
+                        return <ItemVideo key={index} itemVideo={item} />;
+                      })}
+                  </RadioGroup>
+                </div>
+              )}
             </div>
             {learning.infoVideo.asTrailer ? (
               ""
