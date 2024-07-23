@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge"
 
 import { Observable, Subscriber } from 'rxjs';
 import moment from "moment";
+import { VideoWatchPercent } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -54,3 +55,14 @@ export const parseParams = (params: any) => {
 
   return options ? options.slice(0, -1) : options;
 };
+export const watchFull=(pool: Set<number>, videoDuration: number): boolean=> {
+  console.log({pool: pool.size,videoDuration,VideoWatchPercent,per:videoDuration * VideoWatchPercent.Full});
+  
+  return pool.size >= videoDuration * VideoWatchPercent.Full;
+}
+export const watchSeek=(pool: Set<number>, videoDuration: number) =>{
+  const step = (videoDuration * VideoWatchPercent.Seek) << 0;
+  const epsilon = ((pool.size / step) << 0) + 1;
+
+  return pool.size == epsilon * step;
+}
