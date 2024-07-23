@@ -76,7 +76,7 @@ export default function DetailSemianr() {
     getListVideos();
   }, [session]);
   useEffect(() => {
-    session &&
+    session && idVideo &&
       axiosAuth.get(`Video/${idVideo}`).then((res) => {
         setInfoVideo(res.data)
         dispatch(updateDuration(res.data.duration));

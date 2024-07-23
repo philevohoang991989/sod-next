@@ -42,8 +42,11 @@ export default function VideoPlayer({ src }: { src: string }) {
     }
     playerRef.current = video && new Plyr(video, {});
   }, [src]);
-
+  const onTimeUpdate=()=>{
+    console.log({videoRef: videoRef.current?.currentTime});
+    
+  }
   return (
-    <video ref={videoRef} autoPlay />
+    <video ref={videoRef} autoPlay onTimeUpdate={()=>onTimeUpdate()}/>
   );
 }
