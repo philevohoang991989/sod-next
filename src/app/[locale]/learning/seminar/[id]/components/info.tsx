@@ -1,13 +1,30 @@
 "use client";
 import VideoPlayer from "@/components/video-player";
+import { ViewHistoryAddDto } from "@/types";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
 interface Props {
   infoSeminar: any;
   infoVideo: any;
+  dataHistory: any;
+  setDataHistory?: (value: any) => void;
 }
-export default function Info({ infoSeminar, infoVideo }: Props) {
+export default function Info({
+  infoSeminar,
+  infoVideo,
+  dataHistory,
+  setDataHistory,
+}: Props) {
+  const [cookie] = useCookies(["userId"]);
+  // useEffect(() => {
+  //   typeof setDataHistory === "function" &&
+  //     setDataHistory({
+  //       userId: cookie.userId,
+  //       seminarId: infoSeminar.id,
+  //       videoId: infoVideo.id,
+  //       viewDuration: 0,
+  //     });
+  // }, [infoSeminar, infoVideo]);
 
   return (
     <div>
@@ -17,6 +34,17 @@ export default function Info({ infoSeminar, infoVideo }: Props) {
       {infoVideo.streamUrl && (
         <VideoPlayer
           src={`https://sod-antmedia-137-184-249-221.nip.io/WebRTCAppEE/streams/${infoVideo.streamUrl}.m3u8`}
+          setDataHistory={(values: ViewHistoryAddDto) => {
+            typeof setDataHistory === "function" &&
+              setDataHistory({
+                ...values,
+                userId: cookie.userId,
+                seminarId: infoSeminar.id,
+                videoId: infoVideo.id,
+              });
+            
+          }}
+          dataHistory={dataHistory}
         />
       )}
       <div className="mt-[1.5rem] flex flex-col gap-4">

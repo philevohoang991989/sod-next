@@ -33,6 +33,13 @@ export default function DetailSemianr() {
   const [listVideo, setListVideo] = useState<any>();
   const [infoVideo, setInfoVideo] = useState<any>();
   const [idVideo, setIdVideo] = useState<any>();
+  const [dataHistory, setDataHistory] = useState({
+    userId: 0,
+    seminarId: 0,
+    videoId: 0,
+    viewDuration: 0,
+  });
+  const [updateView, setUpdateView] = useState(false)
   const getInfoSeminar = () => {
     session &&
       axiosAuth.get(`Seminar/${params.id}/user`).then((res: any) => {
@@ -40,9 +47,19 @@ export default function DetailSemianr() {
         dispatch(updateInfoSeminar(res.data));
       });
   };
+  useEffect(() => {
+    session &&
+      dataHistory.videoId !== 0 &&
+      dataHistory.seminarId !== 0 &&
+      axiosAuth.post("ViewHistory", dataHistory).then((res) => {
+        console.log({ ViewHistory: res.data });
+        setUpdateView(true)
+      });
+  }, [dataHistory, session]);
+
   const getListVideos = async () => {
     try {
-      if (session) {
+      if (session || updateView) {
         const [videoSeminarUserResponse, viewHistoryResponse] =
           await Promise.all([
             axiosAuth.get(`Seminar/${params.id}/learning`),
@@ -74,11 +91,13 @@ export default function DetailSemianr() {
   useEffect(() => {
     getInfoSeminar();
     getListVideos();
-  }, [session]);
+    updateView && setUpdateView(false)
+  }, [session,updateView]);
   useEffect(() => {
-    session && idVideo &&
+    session &&
+      idVideo &&
       axiosAuth.get(`Video/${idVideo}`).then((res) => {
-        setInfoVideo(res.data)
+        setInfoVideo(res.data);
         dispatch(updateDuration(res.data.duration));
       });
   }, [session, idVideo]);
@@ -109,6 +128,8 @@ export default function DetailSemianr() {
             <Info
               infoSeminar={infoSeminar ? infoSeminar : {}}
               infoVideo={infoVideo ? infoVideo : {}}
+              dataHistory={dataHistory}
+              setDataHistory={(value: any) => setDataHistory(value)}
             />
           </div>
           <div className="col-span-1 flex flex-col gap-4">

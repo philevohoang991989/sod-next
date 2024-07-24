@@ -91,3 +91,10 @@ export interface InfoVideoUser{
   isTheLastViewed?: boolean;
   totalDuration?: number;
 }
+
+export interface ViewHistoryAddDto {
+  userId?: number;
+  seminarId?: number;
+  videoId?: number;
+  viewDuration?: number;
+}

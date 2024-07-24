@@ -3,8 +3,9 @@ import Hls from "hls.js";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 import { watchFull, watchSeek } from "@/lib/utils";
+import { VideoWatchPercent } from "@/constants";
 
-export default function VideoPlayer({ src }: { src: string }) {
+export default function VideoPlayer({ src,setDataHistory,dataHistory }: { src: string,setDataHistory?:(value : any)=>void,dataHistory: any }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<Plyr | null>(null);
   const [logTracking, setLogTracking] = useState<Set<number>>(
@@ -13,6 +14,7 @@ export default function VideoPlayer({ src }: { src: string }) {
   useEffect(() => {
     setLogTracking(new Set<number>());
   }, [src]);
+  
   useEffect(() => {
     const video = videoRef.current;
     let hls: Hls | null | any = null;
@@ -56,8 +58,9 @@ export default function VideoPlayer({ src }: { src: string }) {
       return;
     }
 
-    const timeSecond = videoRef.current.currentTime ?? 0;
-    if (timeSecond > 0) {
+   
+    const timeSecond = videoRef.current.currentTime;
+    if (timeSecond > 0 && !logTracking.has(timeSecond)) {
       setLogTracking((prevLogTracking) => {
         const newLogTracking = new Set(prevLogTracking);
         newLogTracking.add(timeSecond);
@@ -67,12 +70,15 @@ export default function VideoPlayer({ src }: { src: string }) {
 
     const duration = videoRef.current.duration ?? 0;
     const endVideo = videoRef.current.currentTime === duration;
-    console.log({ duration, videoRef:videoRef.current.currentTime,endVideo, logTracking });
 
     if (endVideo && watchFull(logTracking, duration)) {
       console.log("full", watchFull(logTracking, duration));
-    } else if (watchSeek(logTracking, timeSecond)) {
-      console.log("watchSeek", watchSeek(logTracking, timeSecond));
+      typeof setDataHistory === 'function' && setDataHistory({
+        ...dataHistory,
+        viewDuration: videoRef.current.currentTime * 1000
+      })
+    } else if(endVideo){
+      console.log("watchSeek");
     }
   };
 

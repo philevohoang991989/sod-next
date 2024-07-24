@@ -56,7 +56,6 @@ export const parseParams = (params: any) => {
   return options ? options.slice(0, -1) : options;
 };
 export const watchFull=(pool: Set<number>, videoDuration: number): boolean=> {
-  console.log({pool: pool.size,videoDuration,VideoWatchPercent,per:videoDuration * VideoWatchPercent.Full});
   
   return pool.size >= videoDuration * VideoWatchPercent.Full;
 }
